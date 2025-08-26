@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epic Games Store Prototype</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/lucide.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a; /* Dark background */
+            color: #e0e0e0; /* Light text */
+            overflow: hidden; /* Hide overflow for initial splash screen */
+        }
+
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #2a2a2a;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4a4a4a;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5a5a5a;
+        }
+
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #121212; /* Very dark background for splash */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .splash-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .chat-modal, .offline-modal, .move-game-modal {
+            max-height: 80vh; /* Limit modal height */
+        }
+
+        .chat-messages {
+            overflow-y: auto;
+            max-height: calc(80vh - 12rem); /* Adjust based on header/footer */
+        }
+
+        /* Video container for responsive aspect ratio */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen">
+
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
+        <img src="https://placehold.co/1200x630/4A4A4A/FFFFFF?text=EPIC+GAMES" alt="Epic Games Store Logo" class="w-64">
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app-container" class="hidden flex flex-grow flex-col">
+        <!-- Top Navigation Bar -->
+        <header class="bg-gray-900 p-4 flex items-center justify-between shadow-lg z-20">
+            <div class="flex items-center">
+                <img src="https://placehold.co/40x40/4A4A4A/FFFFFF?text=E" alt="Epic Logo" class="w-10 h-10 rounded-md mr-4">
+                <nav id="main-nav-top" class="flex space-x-6">
+                    <a href="#" class="nav-item-top flex items-center p-2 text-lg font-semibold text-gray-300 hover:text-white rounded-md transition-colors duration-200" data-page="store">
+                        Store
+                    </a>
+                    <a href="#" class="nav-item-top flex items-center p-2 text-lg font-semibold text-gray-300 hover:text-white rounded-md transition-colors duration-200" data-page="library">
+                        Library
+                    </a>
+                    <a href="#" class="nav-item-top flex items-center p-2 text-lg font-semibold text-gray-300 hover:text-white rounded-md transition-colors duration-200" data-page="community">
+                        Community
+                    </a>
+                    <a href="#" class="nav-item-top flex items-center p-2 text-lg font-semibold text-gray-300 hover:text-white rounded-md transition-colors duration-200" data-page="unreal-engine">
+                        Unreal Engine
+                    </a>
+                </nav>
+            </div>
+
+            <div class="relative">
+                <!-- Account Button - Now larger and with 'A' -->
+                <button id="account-icon-button" class="p-3 w-10 h-10 bg-gray-700 hover:bg-gray-600 rounded-full text-white flex items-center justify-center text-xl font-bold transition-colors duration-200">
+                    A
+                </button>
+                <div id="account-dropdown" class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 hidden">
+                    <a href="#" id="settings-option" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Settings</a>
+                    <!-- More account options can go here -->
+                </div>
+            </div>
+        </header>
+
+        <div class="flex flex-grow">
+            <!-- Left Sidebar for mini-library (only shown for Library List View) -->
+            <aside id="sidebar" class="w-64 bg-gray-900 p-4 flex flex-col shadow-lg rounded-r-lg transition-all duration-300 ease-in-out hidden">
+                <div id="sidebar-mini-library" class="mt-2 pt-4 border-t border-gray-700">
+                    <h3 class="text-gray-400 text-sm font-semibold mb-2">My Games</h3>
+                    <input type="text" placeholder="Search library..." class="w-full p-2 bg-gray-800 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3">
+                    <div class="space-y-1 overflow-y-auto max-h-48 custom-scrollbar">
+                        <!-- Mini library games will be injected here -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="flex-grow p-6 overflow-y-auto custom-scrollbar bg-gray-800 rounded-l-lg">
+                <div id="content-area">
+                    <!-- Page content will be loaded here -->
+                    <div id="store-page" class="page-content"></div>
+                    <div id="library-page" class="page-content hidden"></div>
+                    <div id="community-page" class="page-content hidden"></div>
+                    <div id="unreal-engine-page" class="page-content hidden"></div>
+                    <div id="game-detail-page" class="page-content hidden"></div>
+                    <div id="purchase-page" class="page-content hidden"></div>
+                    <div id="settings-page" class="page-content hidden"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Help Button -->
+    <button id="help-button" class="fixed bottom-6 right-6 p-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg z-50 transition-all duration-200 ease-in-out flex items-center justify-center">
+        <i data-lucide="help-circle" class="w-6 h-6"></i>
+    </button>
+
+    <!-- Chatbot Modal -->
+    <div id="chatbot-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
+        <div class="bg-gray-900 rounded-xl shadow-2xl w-full max-w-lg chat-modal flex flex-col">
+            <!-- Chat Header -->
+            <div class="p-4 bg-gray-800 border-b border-gray-700 flex justify-between items-center rounded-t-xl">
+                <h2 class="text-xl font-semibold text-white">Epic Games Support Bot</h2>
+                <button id="close-chatbot" class="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors duration-200 text-lg font-bold"> <!-- Changed to explicit 'X' and added styles -->
+                    X
+                </button>
+            </div>
+            <!-- Chat Messages -->
+            <div id="chat-messages" class="chat-messages p-4 flex-grow space-y-4 custom-scrollbar">
+                <!-- Initial bot message -->
+                <div class="flex justify-start">
+                    <div class="bg-gray-700 text-white p-3 rounded-lg max-w-[80%] shadow-md">
+                        How can I help today? For example: "need help with a refund", "trying to solve a crash."
+                    </div>
+                </div>
+            </div>
+            <!-- Chat Input -->
+            <div class="p-4 bg-gray-800 border-t border-gray-700 flex items-center rounded-b-xl">
+                <input type="text" id="chat-input" placeholder="Type your message..." class="flex-grow p-3 bg-gray-700 text-white rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button id="send-chat" class="p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-r-md transition-colors duration-200 ml-2">
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Go Offline Confirmation Modal -->
+    <div id="go-offline-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
+        <div class="bg-gray-900 rounded-xl shadow-2xl w-full max-w-md offline-modal flex flex-col">
+            <!-- Modal Header -->
+            <div class="p-4 bg-gray-800 border-b border-gray-700 flex justify-between items-center rounded-t-xl">
+                <h2 class="text-xl font-semibold text-white">Go Offline?</h2>
+                <button id="close-offline-modal" class="text-gray-400 hover:text-white transition-colors duration-200">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <!-- Modal Content -->
+            <div class="p-6 text-white text-lg">
+                <p class="mb-4">To go offline and continue playing your library of games, Epic Games needs to restart.</p>
+                <p class="text-gray-400 text-sm">Note that online games like Fortnite still require a connection to play.</p>
+            </div>
+            <!-- Modal Footer -->
+            <div class="p-4 bg-gray-800 border-t border-gray-700 flex justify-end space-x-3 rounded-b-xl">
+                <button id="cancel-offline-btn" class="px-5 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors duration-200">Cancel</button>
+                <button id="confirm-offline-btn" class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors duration-200">Go Offline</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Move Game Modal -->
+    <div id="move-game-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
+        <div class="bg-gray-900 rounded-xl shadow-2xl w-full max-w-md move-game-modal flex flex-col">
+            <!-- Modal Header -->
+            <div class="p-4 bg-gray-800 border-b border-gray-700 flex justify-between items-center rounded-t-xl">
+                <h2 class="text-xl font-semibold text-white">Move Game: <span id="move-game-title"></span></h2>
+                <button id="close-move-game-modal" class="text-gray-400 hover:text-white transition-colors duration-200">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <!-- Modal Content -->
+            <div class="p-6 text-white text-lg">
+                <p class="mb-4">Select an alternative drive to move your game to:</p>
+                <div id="drive-options" class="space-y-3 mb-6">
+                    <button class="drive-select-btn w-full p-3 bg-gray-700 hover:bg-gray-600 rounded-md text-left transition-colors duration-200" data-drive="C">
+                        Drive C: (Current)
+                    </button>
+                    <button class="drive-select-btn w-full p-3 bg-blue-600 hover:bg-blue-700 rounded-md text-left transition-colors duration-200" data-drive="D">
+                        Drive D: (New Drive)
+                    </button>
+                    <button class="drive-select-btn w-full p-3 bg-gray-700 hover:bg-gray-600 rounded-md text-left transition-colors duration-200" data-drive="E">
+                        Drive E:
+                    </button>
+                </div>
+                <!-- Progress bar and success message -->
+                <div id="move-progress-container" class="hidden">
+                    <p class="text-gray-400 text-sm mb-2">Moving to Drive <span id="target-drive-display"></span>...</p>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5 mb-4">
+                        <div id="move-progress-bar" class="bg-green-500 h-2.5 rounded-full" style="width: 0%;"></div>
+                    </div>
+                    <p id="move-status-message" class="text-green-400 font-semibold text-center hidden"></p>
+                </div>
+            </div>
+            <!-- Modal Footer (Optional, can be used for persistent buttons) -->
+            <div class="p-4 bg-gray-800 border-t border-gray-700 flex justify-end rounded-b-xl">
+                <button class="close-custom-message px-5 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors duration-200" id="move-game-modal-ok-btn">OK</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="module">
+        // Global variable for API key for Gemini API
+        const apiKey = ""; // Canvas will automatically provide the API key at runtime
+        // Explicitly bring lucide into the module scope
+        const lucide = window.lucide;
+
+        // Initialize Lucide icons
+        document.addEventListener('DOMContentLoaded', () => {
+            if (lucide) { // Ensure lucide is defined before calling createIcons
+                lucide.createIcons();
+            }
+        });
+
+        // Mock Game Data
+        const mockGames = [
+            { id: 'game1', title: 'Cyberpunk 2077', developer: 'CD Projekt RED', genre: 'RPG, Action', price: 59.99, discountPrice: 29.99, isFree: false, releaseYear: 2020, imageUrl: 'https://placehold.co/400x250/000/fff?text=Cyberpunk+2077',
+                heroVideoUrl: 'https://www.youtube.com/embed/P99qJGrpn5w?autoplay=1&mute=1', // Example YouTube embed
+                description: 'Cyberpunk 2077 is an open-world, action-adventure RPG set in the megalopolis of Night City, where you play as a cyberpunk mercenary wrapped up in a one-of-a-kind fight for survival. Upgraded with a new district, an overhauled skill system, and a ton of new content, this is the ultimate Cyberpunk 2077 experience. Become an urban mercenary endowed with cybernetic enhancements and build your legend on the streets of Night City. Enjoy the expanded story with the Phantom Liberty expansion and explore the dangerous district of Dogtown.'
+            },
+            { id: 'game2', title: 'Fortnite', developer: 'Epic Games', genre: 'Battle Royale, Shooter', price: 0.00, isFree: true, releaseYear: 2017, imageUrl: 'https://placehold.co/400x250/000/fff?text=Fortnite' },
+            { id: 'game3', title: 'Alan Wake 2', developer: 'Remedy Entertainment', genre: 'Survival Horror', price: 49.99, discountPrice: 39.99, isFree: false, releaseYear: 2023, imageUrl: 'https://placehold.co/400x250/000/fff?text=Alan+Wake+2' },
+            { id: 'game4', title: 'Gears 5', developer: 'The Coalition', genre: 'Third-Person Shooter', price: 39.99, discountPrice: 19.99, isFree: false, releaseYear: 2019, imageUrl: 'https://placehold.co/400x250/000/fff?text=Gears+5' },
+            { id: 'game5', title: 'Grand Theft Auto V', developer: 'Rockstar Games', genre: 'Action-Adventure', price: 29.99, discountPrice: 14.99, isFree: false, releaseYear: 2013, imageUrl: 'https://placehold.co/400x250/000/fff?text=GTA+V' },
+            { id: 'game6', title: 'Control', developer: 'Remedy Entertainment', genre: 'Action-Adventure', price: 29.99, discountPrice: 9.99, isFree: false, releaseYear: 2019, imageUrl: 'https://placehold.co/400x250/000/fff?text=Control' },
+            { id: 'game7', title: 'Red Dead Redemption 2', developer: 'Rockstar Games', genre: 'Action-Adventure', price: 59.99, discountPrice: 35.99, isFree: false, releaseYear: 2018, imageUrl: 'https://placehold.co/400x250/000/fff?text=RDR2' },
+            { id: 'game8', title: 'Baldur\'s Gate 3', developer: 'Larian Studios', genre: 'RPG', price: 59.99, isFree: false, releaseYear: 2023, imageUrl: 'https://placehold.co/400x250/000/fff?text=Baldurs+Gate+3' },
+            { id: 'game9', 'title': 'Horizon Forbidden West', developer: 'Guerrilla Games', genre: 'Action RPG', price: 59.99, discountPrice: 40.00, isFree: false, releaseYear: 2022, imageUrl: 'https://placehold.co/400x250/000/fff?text=Horizon+FW' },
+            { id: 'game10', 'title': 'God of War Ragnarök', developer: 'Santa Monica Studio', genre: 'Action-Adventure', price: 59.99, discountPrice: 45.00, isFree: false, releaseYear: 2022, imageUrl: 'https://placehold.co/400x250/000/fff?text=God+of+War' },
+            { id: 'game11', 'title': 'Assassin\'s Creed Valhalla', developer: 'Ubisoft', genre: 'Action RPG', price: 49.99, discountPrice: 20.00, isFree: false, releaseYear: 2020, imageUrl: 'https://placehold.co/400x250/000/fff?text=AC+Valhalla' },
+            { id: 'game12', 'title': 'Marvel\'s Spider-Man: Miles Morales', developer: 'Insomniac Games', genre: 'Action-Adventure', price: 49.99, discountPrice: 25.00, isFree: false, releaseYear: 2020, imageUrl: 'https://placehold.co/400x250/000/fff?text=Spider-Man+MM' },
+            { id: 'game13', 'title': 'The Witcher 3: Wild Hunt', developer: 'CD Projekt RED', genre: 'RPG', price: 39.99, discountPrice: 9.99, isFree: false, releaseYear: 2015, imageUrl: 'https://placehold.co/400x250/000/fff?text=The+Witcher+3' },
+            { id: 'game14', 'title': 'DOOM Eternal', developer: 'id Software', genre: 'FPS', price: 39.99, discountPrice: 15.00, isFree: false, releaseYear: 2020, imageUrl: 'https://placehold.co/400x250/000/fff?text=DOOM+Eternal' },
+            { id: 'game15', 'title': 'Dying Light 2 Stay Human', developer: 'Techland', genre: 'Action RPG, Survival Horror', price: 59.99, discountPrice: 30.00, isFree: false, releaseYear: 2022, imageUrl: 'https://placehold.co/400x250/000/fff?text=Dying+Light+2' },
+            { id: 'game16', 'title': 'Starfield', developer: 'Bethesda Game Studios', genre: 'RPG', price: 69.99, discountPrice: 50.00, isFree: false, releaseYear: 2023, imageUrl: 'https://placehold.co/400x250/000/fff?text=Starfield' },
+            { id: 'game17', 'title': 'Halo Infinite', developer: '343 Industries', genre: 'FPS', price: 59.99, discountPrice: 20.00, isFree: false, releaseYear: 2021, imageUrl: 'https://placehold.co/400x250/000/fff?text=Halo+Infinite' },
+            { id: 'game18', 'title': 'Resident Evil 4 Remake', developer: 'Capcom', genre: 'Survival Horror', price: 59.99, discountPrice: 40.00, isFree: false, releaseYear: 2023, imageUrl: 'https://placehold.co/400x250/000/fff?text=RE4+Remake' },
+            { id: 'game19', 'title': 'Elden Ring', developer: 'FromSoftware', genre: 'Action RPG', price: 59.99, discountPrice: 45.00, isFree: false, releaseYear: 2022, imageUrl: 'https://placehold.co/400x250/000/fff?text=Elden+Ring' },
+            { id: 'game20', 'title': 'Stray', developer: 'BlueTwelve Studio', genre: 'Adventure', price: 29.99, discountPrice: 19.99, isFree: false, releaseYear: 2022, imageUrl: 'https://placehold.co/400x250/000/fff?text=Stray' },
+            { id: 'game21', 'title': 'New Game 2025 A', developer: 'Developer X', genre: 'Action', price: 69.99, releaseYear: 2025, imageUrl: 'https://placehold.co/400x250/000/fff?text=2025+Game+A' },
+            { id: 'game22', 'title': 'New Game 2025 B', developer: 'Developer Y', genre: 'Adventure', price: 59.99, releaseYear: 2025, imageUrl: 'https://placehold.co/400x250/000/fff?text=2025+Game+B' },
+            { id: 'game23', 'title': 'New Game 2025 C', developer: 'Developer Z', genre: 'RPG', price: 69.99, releaseYear: 2025, imageUrl: 'https://placehold.co/400x250/000/fff?text=2025+Game+C' },
+            { id: 'game24', 'title': 'New Game 2025 D', developer: 'Developer W', genre: 'Strategy', price: 49.99, releaseYear: 2025, imageUrl: 'https://placehold.co/400x250/000/fff?text=2025+Game+D' },
+        ];
+
+        // Mock Library Data (a subset of mockGames)
+        const myLibraryGames = [
+            { id: 'game1', title: 'Cyberpunk 2077', installed: true },
+            { id: 'game2', title: 'Fortnite', installed: true },
+            { id: 'game3', title: 'Alan Wake 2', installed: false },
+            { id: 'game5', title: 'Grand Theft Auto V', installed: true },
+            { id: 'game8', title: 'Baldur\'s Gate 3', installed: true },
+            { id: 'game13', title: 'The Witcher 3: Wild Hunt', installed: false },
+        ];
+
+        // UI Element References
+        const splashScreen = document.getElementById('splash-screen');
+        const appContainer = document.getElementById('app-container');
+        // Get references to all page content containers
+        const storePage = document.getElementById('store-page');
+        const libraryPage = document.getElementById('library-page');
+        const communityPage = document.getElementById('community-page');
+        const unrealEnginePage = document.getElementById('unreal-engine-page');
+        const gameDetailPage = document.getElementById('game-detail-page');
+        const purchasePage = document.getElementById('purchase-page');
+        const settingsPage = document.getElementById('settings-page');
+
+        const navItemsTop = document.querySelectorAll('.nav-item-top'); // Changed to nav-item-top
+        const sidebar = document.getElementById('sidebar'); // This is now solely for the mini-library
+        const sidebarMiniLibrary = document.getElementById('sidebar-mini-library');
+        const helpButton = document.getElementById('help-button');
+        const chatbotModal = document.getElementById('chatbot-modal');
+        const closeChatbotButton = document.getElementById('close-chatbot');
+        const chatInput = document.getElementById('chat-input');
+        const sendChatButton = document.getElementById('send-chat');
+        const chatMessages = document.getElementById('chat-messages');
+
+        const accountIconButton = document.getElementById('account-icon-button');
+        const accountDropdown = document.getElementById('account-dropdown');
+        const settingsOption = document.getElementById('settings-option');
+
+        const goOfflineModal = document.getElementById('go-offline-modal');
+        const closeOfflineModal = document.getElementById('close-offline-modal');
+        const cancelOfflineBtn = document.getElementById('cancel-offline-btn');
+        const confirmOfflineBtn = document.getElementById('confirm-offline-btn');
+
+        // Move Game Modal elements
+        const moveGameModal = document.getElementById('move-game-modal');
+        const closeMoveGameModalBtn = document.getElementById('close-move-game-modal');
+        const moveGameTitleSpan = document.getElementById('move-game-title');
+        const driveOptionsDiv = document.getElementById('drive-options');
+        const moveProgressContainer = document.getElementById('move-progress-container');
+        const moveProgressBar = document.getElementById('move-progress-bar');
+        const moveStatusMessage = document.getElementById('move-status-message');
+        const targetDriveDisplay = document.getElementById('target-drive-display');
+        const moveGameModalOkBtn = document.getElementById('move-game-modal-ok-btn');
+
+
+        let currentPage = 'store';
+        let isSidebarMiniLibraryActive = false; // To track if the mini-library is currently displayed
+
+        // Chatbot history for LLM
+        let chatHistory = [];
+
+        // --- Utility Functions ---
+
+        /**
+         * Shows a specific page content and hides others.
+         * @param {HTMLElement} pageToShow - The page element to make visible.
+         */
+        function showPage(pageToShow) {
+            // Hide all page content elements
+            document.querySelectorAll('.page-content').forEach(page => page.classList.add('hidden'));
+            // Show the requested page
+            pageToShow.classList.remove('hidden');
+        }
+
+        /**
+         * Renders a game card for display in rails.
+         * @param {object} game - Game object.
+         * @returns {string} HTML string for a game card.
+         */
+        function renderGameCard(game) {
+            const priceHtml = game.isFree
+                ? `<span class="text-green-400 font-bold">FREE</span>`
+                : game.discountPrice
+                    ? `<span class="line-through text-gray-500 mr-1 text-xs">£${game.price.toFixed(2)}</span><span class="text-green-400 font-bold text-xs">£${game.discountPrice.toFixed(2)}</span>`
+                    : `<span class="text-white font-bold text-xs">£${game.price.toFixed(2)}</span>`;
+
+            // Adjusted card and image classes for smaller tiles
+            return `
+                <div class="game-card bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer" data-game-id="${game.id}">
+                    <img src="${game.imageUrl}" alt="${game.title}" onerror="this.onerror=null;this.src='https://placehold.co/250x150/333/eee?text=Image+Unavailable';" class="w-full h-24 object-cover">
+                    <div class="p-2">
+                        <h3 class="text-md font-semibold text-white truncate">${game.title}</h3>
+                        <p class="text-xs text-gray-400 truncate">${game.developer}</p> <!-- Reduced font size for developer -->
+                        <div class="mt-1 text-right flex items-baseline justify-end space-x-1"> <!-- Ensure price text is visible and fits -->
+                            ${priceHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+
+        /**
+         * Renders a game list item for the library list view.
+         * @param {object} game - Game object.
+         * @returns {string} HTML string for a game list item.
+         */
+        function renderGameListItem(game) {
+            const fullGame = mockGames.find(g => g.id === game.id) || {};
+            return `
+                <div class="flex items-center bg-gray-700 rounded-lg p-3 shadow-md hover:bg-gray-600 transition-colors duration-200" data-game-id="${game.id}">
+                    <img src="${fullGame.imageUrl || 'https://placehold.co/60x40/333/eee?text=Game'}" alt="${game.title}" class="w-16 h-10 object-cover rounded-md mr-4">
+                    <div class="flex-grow">
+                        <h3 class="text-base font-semibold text-white">${game.title}</h3>
+                        <p class="text-xs text-gray-400">${fullGame.developer || 'N/A'}</p> <!-- Reduced font size for developer -->
+                    </div>
+                    <span class="text-sm ${game.installed ? 'text-green-400' : 'text-gray-400'}">${game.installed ? 'Installed' : 'Not Installed'}</span>
+                    <button class="ml-4 p-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors duration-200">Launch</button>
+                    <div class="relative inline-block text-left">
+                        <button class="game-settings-btn ml-2 p-2 bg-gray-600 hover:bg-gray-500 rounded-full text-white transition-colors duration-200" data-game-id="${game.id}" data-game-title="${game.title}">
+                            <i data-lucide="cog" class="w-4 h-4"></i>
+                        </button>
+                        <div id="settings-dropdown-${game.id}" class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none hidden" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                            <div class="py-1" role="none">
+                                <a href="#" class="move-game-option text-gray-300 block px-4 py-2 text-sm hover:bg-gray-700" role="menuitem" tabindex="-1" id="menu-item-0" data-game-id="${game.id}" data-game-title="${game.title}">
+                                    Move game
+                                </a>
+                                <!-- More options can be added here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Renders a game tile for the library tile view.
+         * @param {object} game - Game object.
+         * @returns {string} HTML string for a game tile.
+         */
+        function renderGameTile(game) {
+            const fullGame = mockGames.find(g => g.id === game.id) || {};
+            return `
+                <div class="bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center p-4">
+                    <img src="${fullGame.imageUrl || 'https://placehold.co/150x100/333/eee?text=Game'}" alt="${game.title}" class="w-full h-32 object-cover rounded-md mb-3">
+                    <h3 class="text-lg font-semibold text-white text-center">${game.title}</h3>
+                    <p class="text-sm text-gray-400 text-center">${game.installed ? 'Installed' : 'Not Installed'}</p>
+                    <button class="mt-3 w-full p-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors duration-200">Launch</button>
+                </div>
+            `;
+        }
+
+
+        /**
+         * Renders a rail of games with a title.
+         * @param {string} title - Title of the rail.
+         * @param {Array<object>} games - Array of game objects.
+         * @param {boolean} showDiscount - Whether to display original price and discount.
+         * @param {boolean} isHero - If it's the hero rail, uses larger cards.
+         * @returns {string} HTML string for a game rail.
+         */
+        function renderGameRail(title, games, showDiscount = false, isHero = false) {
+            const cardClass = isHero ? 'min-w-[400px] h-64' : 'min-w-[150px] h-44';
+            const imgClass = isHero ? 'h-40' : 'h-24'; // Ensure consistent image height
+
+            const gameCards = games.map(game => {
+                const priceHtml = game.isFree
+                    ? `<span class="text-green-400 font-bold text-xs">FREE</span>`
+                    : showDiscount && game.discountPrice && game.price !== game.discountPrice
+                        ? `<span class="line-through text-gray-500 mr-1 text-xs">£${game.price.toFixed(2)}</span><span class="text-green-400 font-bold text-xs">£${game.discountPrice.toFixed(2)}</span>`
+                        : `<span class="text-white font-bold text-xs">£${game.price.toFixed(2)}</span>`;
+
+                return `
+                    <div class="game-card bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer ${cardClass}" data-game-id="${game.id}">
+                        <img src="${game.imageUrl}" alt="${game.title}" onerror="this.onerror=null;this.src='https://placehold.co/250x150/333/eee?text=Image+Unavailable';" class="w-full ${imgClass} object-cover">
+                        <div class="p-2">
+                            <h3 class="text-md font-semibold text-white truncate">${game.title}</h3>
+                            <p class="text-xs text-gray-400 truncate">${game.developer}</p> <!-- Reduced font size for developer -->
+                            <div class="mt-1 text-right flex items-baseline justify-end space-x-1"> <!-- Added flex for better price layout -->
+                                ${priceHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <section class="mb-8">
+                    <h2 class="text-2xl font-bold text-white mb-4">${title}</h2>
+                    <div class="flex overflow-x-auto space-x-4 pb-4 custom-scrollbar">
+                        ${gameCards}
+                    </div>
+                </section>
+            `;
+        }
+
+        // --- Page Render Functions ---
+
+        /** Renders the Store page content. */
+        function renderStorePage() {
+            storePage.innerHTML = `
+                <div class="mb-6 flex justify-center">
+                    <input type="text" placeholder="Search store..." class="w-full max-w-lg p-3 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="space-y-8">
+                    ${renderGameRail('2025 Games', mockGames.filter(g => g.releaseYear === 2025).slice(0, 8), false, true)}
+                    ${renderGameRail('Discover Something New (Action Games)', mockGames.filter(g => g.genre.includes('Action')).slice(0, 10))}
+                    ${renderGameRail('Featured Discounts', mockGames.filter(g => g.discountPrice && g.discountPrice < g.price).slice(0, 10), true)}
+
+                    <section class="mb-8">
+                        <h2 class="text-2xl font-bold text-white mb-4">Free Games</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <!-- Free Games -->
+                            <div class="bg-gradient-to-br from-purple-700 to-indigo-800 rounded-xl overflow-hidden shadow-lg p-6 flex flex-col justify-between hover:scale-105 transition-transform duration-300">
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-2">Game Name 1</h3>
+                                    <p class="text-gray-200 text-sm">Offer ends 10/10/2025</p>
+                                </div>
+                                <div class="text-right mt-4">
+                                    <span class="bg-green-500 text-white text-sm font-bold px-3 py-1 rounded-full uppercase">FREE</span>
+                                </div>
+                            </div>
+                            <div class="bg-gradient-to-br from-green-700 to-teal-800 rounded-xl overflow-hidden shadow-lg p-6 flex flex-col justify-between hover:scale-105 transition-transform duration-300">
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-2">Game Name 2</h3>
+                                    <p class="text-gray-200 text-sm">Offer ends 10/10/2025</p>
+                                </div>
+                                <div class="text-right mt-4">
+                                    <span class="bg-green-500 text-white text-sm font-bold px-3 py-1 rounded-full uppercase">FREE</span>
+                                </div>
+                            </div>
+                            <!-- Mystery Games -->
+                            <div class="bg-gray-700 rounded-xl overflow-hidden shadow-lg p-6 flex flex-col justify-center items-center text-center hover:scale-105 transition-transform duration-300">
+                                <i data-lucide="help-circle" class="w-12 h-12 text-gray-400 mb-3"></i>
+                                <h3 class="text-xl font-bold text-white">Mystery Game</h3>
+                                <p class="text-gray-400 text-sm">Unlocks Next Week!</p>
+                            </div>
+                            <div class="bg-gray-700 rounded-xl overflow-hidden shadow-lg p-6 flex flex-col justify-center items-center text-center hover:scale-105 transition-transform duration-300">
+                                <i data-lucide="help-circle" class="w-12 h-12 text-gray-400 mb-3"></i>
+                                <h3 class="text-xl font-bold text-white">Mystery Game</h3>
+                                <p class="text-gray-400 text-sm">Unlocks Next Week!</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            `;
+            if (lucide) {
+                lucide.createIcons(); // Re-render Lucide icons for new content
+            }
+            // Add event listeners for game cards
+            storePage.querySelectorAll('.game-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const gameId = e.currentTarget.dataset.gameId;
+                    renderGameDetailPage(gameId);
+                });
+            });
+        }
+
+        /** Renders the Library page content. */
+        function renderLibraryPage() {
+            const installedGamesCount = myLibraryGames.filter(game => game.installed).length;
+
+            const filterPanel = `
+                <div class="w-full lg:w-64 bg-gray-900 p-4 rounded-lg shadow-lg hidden lg:block overflow-y-auto custom-scrollbar">
+                    <h3 class="text-xl font-bold text-white mb-4">Filters</h3>
+                    <div class="mb-4">
+                        <label for="filter-search" class="block text-gray-300 text-sm font-medium mb-2">Search Games (Library)</label>
+                        <input type="text" id="filter-search" placeholder="Search..." class="w-full p-2 bg-gray-800 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-gray-300 font-medium mb-2">Installed</p>
+                        <span class="text-white text-lg font-bold">${installedGamesCount} games</span>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-gray-300 font-medium mb-2">Genre</p>
+                        <select class="w-full p-2 bg-gray-800 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>All</option>
+                            <option>Action</option>
+                            <option>RPG</option>
+                            <option>Survival Horror</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-gray-300 font-medium mb-2">Features</p>
+                        <select class="w-full p-2 bg-gray-800 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>All</option>
+                            <option>Multiplayer</option>
+                            <option>Single Player</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-gray-300 font-medium mb-2">Types</p>
+                        <select class="w-full p-2 bg-gray-800 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>All</option>
+                            <option>Game</option>
+                            <option>Application</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-gray-300 font-medium mb-2">Platform</p>
+                        <select class="w-full p-2 bg-gray-800 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>All</option>
+                            <option>Windows</option>
+                            <option>MacOS</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+
+            // Always render in list view for the library page as per new requirement
+            const libraryContent = `<div class="space-y-4">${myLibraryGames.map(renderGameListItem).join('')}</div>`;
+
+            libraryPage.innerHTML = `
+                <div class="flex flex-col lg:flex-row gap-6">
+                    <div class="flex-grow">
+                        <h1 class="text-3xl font-bold text-white mb-6">My Library</h1>
+                        ${libraryContent}
+                    </div>
+                    ${filterPanel}
+                </div>
+            `;
+
+            if (lucide) {
+                lucide.createIcons(); // Re-render Lucide icons for new content
+            }
+            // Ensure mini-library is active when in library page
+            activateSidebarMiniLibrary();
+
+            // Attach event listeners for game settings buttons
+            libraryPage.querySelectorAll('.game-settings-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent the parent div's click from firing
+                    const gameId = e.currentTarget.dataset.gameId;
+                    const dropdown = document.getElementById(`settings-dropdown-${gameId}`);
+                    // Close other dropdowns
+                    document.querySelectorAll('.origin-top-right').forEach(d => {
+                        if (d.id !== `settings-dropdown-${gameId}`) {
+                            d.classList.add('hidden');
+                        }
+                    });
+                    dropdown.classList.toggle('hidden');
+                });
+            });
+
+            libraryPage.querySelectorAll('.move-game-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation(); // Stop propagation to prevent closing immediately
+                    const gameId = e.currentTarget.dataset.gameId;
+                    const gameTitle = e.currentTarget.dataset.gameTitle;
+                    // Hide the dropdown after clicking "Move game"
+                    document.getElementById(`settings-dropdown-${gameId}`).classList.add('hidden');
+                    openMoveGameModal(gameId, gameTitle);
+                });
+            });
+
+            // Close dropdown if clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.game-settings-btn') && !e.target.closest('.origin-top-right')) {
+                    document.querySelectorAll('.origin-top-right').forEach(d => d.classList.add('hidden'));
+                }
+            });
+        }
+
+        /** Renders the Community page content. */
+        function renderCommunityPage() {
+            communityPage.innerHTML = `
+                <h1 class="text-3xl font-bold text-white mb-6">Community</h1>
+                <div class="mb-6">
+                    <input type="text" placeholder="Search communities..." class="w-full p-3 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-gray-700 p-4 rounded-lg shadow-md hover:bg-gray-600 transition-colors duration-200 cursor-pointer">
+                        <h3 class="text-xl font-semibold text-white">Fortnite Community</h3>
+                        <p class="text-gray-400">Join discussions, find teammates, and stay updated!</p>
+                    </div>
+                    <div class="bg-gray-700 p-4 rounded-lg shadow-md hover:bg-gray-600 transition-colors duration-200 cursor-pointer">
+                        <h3 class="text-xl font-semibold text-white">Alan Wake 2 Fan Club</h3>
+                        <p class="text-gray-400">Discuss theories, lore, and gameplay tips for Alan Wake 2.</p>
+                    </div>
+                    <div class="bg-gray-700 p-4 rounded-lg shadow-md hover:bg-gray-600 transition-colors duration-200 cursor-pointer">
+                        <h3 class="text-xl font-semibold text-white">Titan Quest 2 Guild</h3>
+                        <p class="text-gray-400">For all adventurers in the world of Titan Quest 2.</p>
+                    </div>
+                    <!-- More communities can be added here -->
+                </div>
+            `;
+            if (lucide) {
+                lucide.createIcons(); // Re-render Lucide icons for new content
+            }
+        }
+
+        /** Renders the Unreal Engine page content. */
+        function renderUnrealEnginePage() {
+            unrealEnginePage.innerHTML = `
+                <h1 class="text-3xl font-bold text-white mb-6">Unreal Engine</h1>
+                <div class="bg-gray-700 p-6 rounded-lg shadow-md">
+                    <p class="text-white text-lg mb-4">Explore the power of Unreal Engine! Develop games, create stunning visualizations, and much more.</p>
+                    <p class="text-gray-300">This is a placeholder for the Unreal Engine section. You can imagine links to documentation, marketplace, and community resources here.</p>
+                    <button class="mt-6 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md transition-colors duration-200">
+                        Learn More
+                    </button>
+                </div>
+            `;
+            if (lucide) {
+                lucide.createIcons(); // Re-render Lucide icons for new content
+            }
+        }
+
+        /**
+         * Renders the Game Detail page content.
+         * @param {string} gameId - The ID of the game to display.
+         */
+        function renderGameDetailPage(gameId) {
+            const game = mockGames.find(g => g.id === gameId);
+            if (!game) {
+                console.error("Game not found:", gameId);
+                loadPage('store'); // Redirect to store if game not found
+                return;
+            }
+
+            const priceHtml = game.isFree
+                ? `<span class="text-green-400 text-3xl font-bold">FREE</span>`
+                : game.discountPrice
+                    ? `<span class="line-through text-gray-500 text-xl mr-4">£${game.price.toFixed(2)}</span><span class="text-green-400 text-3xl font-bold">£${game.discountPrice.toFixed(2)}</span>`
+                    : `<span class="text-white text-3xl font-bold">£${game.price.toFixed(2)}</span>`;
+
+            gameDetailPage.innerHTML = `
+                <button id="back-to-store-btn" class="flex items-center text-gray-400 hover:text-white mb-6 transition-colors duration-200">
+                    <i data-lucide="chevron-left" class="w-5 h-5 mr-2"></i> Back to Store
+                </button>
+                <div class="space-y-8">
+                    <!-- Hero Image/Video Trailer -->
+                    <div class="relative rounded-xl overflow-hidden shadow-2xl">
+                        ${game.heroVideoUrl ? `
+                            <div class="video-container">
+                                <iframe src="${game.heroVideoUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                        ` : `
+                            <img src="${game.imageUrl}" alt="${game.title}" class="w-full h-96 object-cover">
+                        `}
+                        <div class="absolute bottom-0 left-0 p-8 bg-gradient-to-t from-black to-transparent w-full">
+                            <h1 class="text-5xl font-bold text-white mb-2">${game.title}</h1>
+                            <p class="text-xl text-gray-300">${game.developer} | ${game.genre}</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-2">
+                            <!-- Game Description -->
+                            <h2 class="text-3xl font-bold text-white mb-4">About the Game</h2>
+                            <p class="text-lg text-gray-300 leading-relaxed">${game.description || 'No description available for this game.'}</p>
+                        </div>
+                        <div class="lg:col-span-1 bg-gray-900 p-6 rounded-xl shadow-lg flex flex-col justify-between">
+                            <!-- Buy Section -->
+                            <div>
+                                <h2 class="text-2xl font-bold text-white mb-4">Purchase</h2>
+                                <div class="flex items-baseline mb-6">
+                                    ${priceHtml}
+                                </div>
+                            </div>
+                            <button id="buy-game-btn" data-game-id="${game.id}" class="w-full p-4 bg-green-600 hover:bg-green-700 text-white text-xl font-bold rounded-lg shadow-md transition-colors duration-200">
+                                Buy Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showPage(gameDetailPage);
+            if (lucide) {
+                lucide.createIcons(); // Re-render Lucide icons for new content
+            }
+
+            document.getElementById('back-to-store-btn').addEventListener('click', () => {
+                loadPage('store');
+            });
+            document.getElementById('buy-game-btn').addEventListener('click', (e) => {
+                const gameIdToBuy = e.currentTarget.dataset.gameId;
+                renderPurchasePage(gameIdToBuy);
+            });
+        }
+
+        /**
+         * Renders the Purchase page content.
+         * @param {string} gameId - The ID of the game being purchased.
+         */
+        function renderPurchasePage(gameId) {
+            const game = mockGames.find(g => g.id === gameId);
+            if (!game) {
+                console.error("Game not found for purchase:", gameId);
+                loadPage('store');
+                return;
+            }
+
+            const price = game.discountPrice || game.price;
+
+            purchasePage.innerHTML = `
+                <button id="back-to-game-detail-btn" class="flex items-center text-gray-400 hover:text-white mb-6 transition-colors duration-200">
+                    <i data-lucide="chevron-left" class="w-5 h-5 mr-2"></i> Back to Game Details
+                </button>
+                <div class="max-w-3xl mx-auto bg-gray-900 p-8 rounded-xl shadow-2xl space-y-8">
+                    <h1 class="text-4xl font-bold text-white text-center">Complete Your Purchase</h1>
+
+                    <!-- Game Summary & Promotion -->
+                    <div class="flex items-center bg-gray-800 p-6 rounded-lg shadow-md">
+                        <img src="${game.imageUrl}" alt="${game.title}" class="w-24 h-16 object-cover rounded-md mr-6">
+                        <div>
+                            <h2 class="text-2xl font-semibold text-white">${game.title}</h2>
+                            <p class="text-gray-300 mt-1">Get ready for an epic adventure! Total: <span class="text-green-400 font-bold">£${price.toFixed(2)}</span></p>
+                            <p class="text-blue-400 text-sm mt-2">Special offer: Purchase now and get 10% off your next game!</p>
+                        </div>
+                    </div>
+
+                    <!-- Payment Options -->
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-4">Choose Payment Method</h2>
+                        <div class="space-y-4">
+                            <div class="payment-option flex items-center bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors duration-200">
+                                <input type="radio" name="payment-method" id="card-payment" class="mr-3 text-blue-600 focus:ring-blue-500" checked>
+                                <label for="card-payment" class="flex-grow text-white text-lg font-medium">Direct Debit / Credit Card</label>
+                                <i data-lucide="credit-card" class="w-6 h-6 text-gray-400"></i>
+                            </div>
+                            <div class="payment-option flex items-center bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors duration-200">
+                                <input type="radio" name="payment-method" id="google-pay" class="mr-3 text-blue-600 focus:ring-blue-500">
+                                <label for="google-pay" class="flex-grow text-white text-lg font-medium">Google Pay</label>
+                                <img src="https://placehold.co/40x24/4285F4/FFFFFF?text=GPay" alt="Google Pay" class="w-10 h-6 object-contain">
+                            </div>
+                            <div class="payment-option flex items-center bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors duration-200">
+                                <input type="radio" name="payment-method" id="apple-pay" class="mr-3 text-blue-600 focus:ring-blue-500">
+                                <label for="apple-pay" class="flex-grow text-white text-lg font-medium">Apple Pay</label>
+                                <img src="https://placehold.co/40x24/000000/FFFFFF?text=Pay" alt="Apple Pay" class="w-10 h-6 object-contain">
+                            </div>
+                            <div class="payment-option flex items-center bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors duration-200">
+                                <input type="radio" name="payment-method" id="paypal-payment" class="mr-3 text-blue-600 focus:ring-blue-500">
+                                <label for="paypal-payment" class="flex-grow text-white text-lg font-medium">PayPal</label>
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" class="w-16 h-6 object-contain">
+                            </div>
+                            <div class="payment-option flex items-center bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors duration-200">
+                                <input type="radio" name="payment-method" id="klarna-payment" class="mr-3 text-blue-600 focus:ring-blue-500">
+                                <label for="klarna-payment" class="flex-grow text-white text-lg font-medium">Klarna</label>
+                                <img src="https://placehold.co/40x24/FFB3C7/000000?text=Klarna" alt="Klarna" class="w-16 h-6 object-contain">
+                            </div>
+                            <!-- Telecom E-billing Options -->
+                            <div class="payment-option flex items-center bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors duration-200">
+                                <input type="radio" name="payment-method" id="ee-billing" class="mr-3 text-blue-600 focus:ring-blue-500">
+                                <label for="ee-billing" class="flex-grow text-white text-lg font-medium">EE Mobile Billing</label>
+                                <img src="https://placehold.co/40x24/FFFFFF/000000?text=EE" alt="EE" class="w-10 h-6 object-contain">
+                            </div>
+                            <div class="payment-option flex items-center bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors duration-200">
+                                <input type="radio" name="payment-method" id="o2-billing" class="mr-3 text-blue-600 focus:ring-blue-500">
+                                <label for="o2-billing" class="flex-grow text-white text-lg font-medium">O2 Mobile Billing</label>
+                                <img src="https://placehold.co/40x24/0000FF/FFFFFF?text=O2" alt="O2" class="w-10 h-6 object-contain">
+                            </div>
+                            <div class="payment-option flex items-center bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors duration-200">
+                                <input type="radio" name="payment-method" id="three-billing" class="mr-3 text-blue-600 focus:ring-blue-500">
+                                <label for="three-billing" class="flex-grow text-white text-lg font-medium">Three Mobile Billing</label>
+                                <img src="https://placehold.co/40x24/FF0000/FFFFFF?text=3" alt="Three" class="w-10 h-6 object-contain">
+                            </div>
+                            <div class="payment-option flex items-center bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors duration-200">
+                                <input type="radio" name="payment-method" id="vodafone-billing" class="mr-3 text-blue-600 focus:ring-blue-500">
+                                <label for="vodafone-billing" class="flex-grow text-white text-lg font-medium">Vodafone Mobile Billing</label>
+                                <img src="https://placehold.co/40x24/E60000/FFFFFF?text=Vodafone" alt="Vodafone" class="w-10 h-6 object-contain">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="confirm-purchase-btn" class="w-full p-4 bg-blue-600 hover:bg-blue-700 text-white text-xl font-bold rounded-lg shadow-md transition-colors duration-200">
+                        Confirm Purchase (£${price.toFixed(2)})
+                    </button>
+                </div>
+            `;
+            showPage(purchasePage);
+            if (lucide) {
+                lucide.createIcons(); // Re-render Lucide icons for new content
+            }
+
+            document.getElementById('back-to-game-detail-btn').addEventListener('click', () => {
+                renderGameDetailPage(gameId); // Go back to the game detail page
+            });
+            document.getElementById('confirm-purchase-btn').addEventListener('click', () => {
+                // In a real app, this would process the payment.
+                // For prototype, just show a confirmation message and go back to store.
+                // Using a custom modal message instead of alert for better UI/UX.
+                showCustomMessage('Purchase Successful!', `You have successfully purchased ${game.title} for £${price.toFixed(2)}. Thank you for your order!`);
+                loadPage('store');
+            });
+        }
+
+        /** Renders the settings page content. */
+        function renderSettingsPage() {
+            settingsPage.innerHTML = `
+                <h1 class="text-3xl font-bold text-white mb-6">Settings</h1>
+
+                <!-- Go Offline Option -->
+                <div class="mb-8 p-6 bg-gray-900 rounded-xl shadow-lg flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-1">Go Offline</h2>
+                        <p class="text-gray-400 text-sm">Play your games without an internet connection.</p>
+                    </div>
+                    <button id="go-offline-btn" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md transition-colors duration-200">
+                        GO OFFLINE
+                    </button>
+                </div>
+
+                <div class="space-y-6 bg-gray-900 p-6 rounded-xl shadow-lg">
+                    <div class="flex items-center justify-between py-2 border-b border-gray-700 last:border-b-0">
+                        <label for="language-select" class="text-lg text-white">Language</label>
+                        <select id="language-select" class="p-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>English</option>
+                            <option>Spanish</option>
+                            <option>French</option>
+                            <option>German</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center justify-between py-2 border-b border-gray-700 last:border-b-0">
+                        <span class="text-lg text-white">Preferences</span>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                    </div>
+
+                    <div class="flex items-center justify-between py-2 border-b border-gray-700 last:border-b-0">
+                        <label for="minimize-tray" class="text-lg text-white">Minimize to system tray</label>
+                        <input type="checkbox" id="minimize-tray" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+                    </div>
+
+                    <div class="flex items-center justify-between py-2 border-b border-gray-700 last:border-b-0">
+                        <label for="run-on-start" class="text-lg text-white">Run when My computer starts</label>
+                        <input type="checkbox" id="run-on-start" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+                    </div>
+
+                    <div class="flex items-center justify-between py-2 border-b border-gray-700 last:border-b-0">
+                        <label for="debug-logging" class="text-lg text-white">Enable Debug logging</label>
+                        <input type="checkbox" id="debug-logging" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+                    </div>
+
+                    <div class="flex items-center justify-between py-2 border-b border-gray-700 last:border-b-0">
+                        <label for="hide-library" class="text-lg text-white">Hide Game Library</label>
+                        <input type="checkbox" id="hide-library" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+                    </div>
+
+                    <div class="flex items-center justify-between py-2 border-b border-gray-700 last:border-b-0">
+                        <label for="cloud-saves" class="text-lg text-white">Enable Cloud Saves</label>
+                        <input type="checkbox" id="cloud-saves" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500" checked>
+                    </div>
+
+                    <div class="flex items-center justify-between py-2">
+                        <label for="use-proxy" class="text-lg text-white">Use Proxy</label>
+                        <input type="checkbox" id="use-proxy" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+                    </div>
+                </div>
+            `;
+            showPage(settingsPage);
+            if (lucide) {
+                lucide.createIcons(); // Re-render Lucide icons for new content
+            }
+
+            document.getElementById('go-offline-btn').addEventListener('click', () => {
+                goOfflineModal.classList.remove('hidden');
+            });
+        }
+
+        // Custom Message Modal (for alerts)
+        function showCustomMessage(title, message) {
+            const modal = document.createElement('div');
+            modal.classList.add('fixed', 'inset-0', 'bg-black', 'bg-opacity-75', 'flex', 'items-center', 'justify-center', 'z-50');
+            modal.innerHTML = `
+                <div class="bg-gray-900 rounded-xl shadow-2xl w-full max-w-sm flex flex-col">
+                    <div class="p-4 bg-gray-800 border-b border-gray-700 flex justify-between items-center rounded-t-xl">
+                        <h2 class="text-xl font-semibold text-white">${title}</h2>
+                        <button class="close-custom-message text-gray-400 hover:text-white transition-colors duration-200">
+                            <i data-lucide="x" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                    <div class="p-6 text-white text-lg">
+                        <p>${message}</p>
+                    </div>
+                    <div class="p-4 bg-gray-800 border-t border-gray-700 flex justify-end rounded-b-xl">
+                        <button class="close-custom-message px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200">OK</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            if (lucide) { // Only call createIcons if lucide is defined
+                lucide.createIcons(); // Render icons in the new modal
+            }
+
+            modal.querySelectorAll('.close-custom-message').forEach(button => {
+                button.addEventListener('click', () => {
+                    modal.remove();
+                });
+            });
+        }
+
+
+        /**
+         * Dynamically loads content based on the selected page.
+         * @param {string} pageName - The name of the page to load ('store', 'library', 'community', 'unreal-engine', 'settings').
+         */
+        function loadPage(pageName) {
+            currentPage = pageName;
+            // Remove active state from all top nav items
+            navItemsTop.forEach(item => {
+                item.classList.remove('bg-blue-700', 'text-white');
+                item.classList.add('text-gray-300', 'hover:text-white');
+            });
+            // Add active state to the current top nav item
+            const currentNavItem = document.querySelector(`.nav-item-top[data-page="${pageName}"]`);
+            if (currentNavItem) {
+                currentNavItem.classList.remove('text-gray-300', 'hover:text-white');
+                currentNavItem.classList.add('bg-gray-800', 'text-white', 'rounded-md'); // Highlight active page
+            }
+
+            // Hide account dropdown if open
+            accountDropdown.classList.add('hidden');
+
+            // Render page specific content and show it
+            switch (pageName) {
+                case 'store':
+                    renderStorePage();
+                    showPage(storePage);
+                    // Sidebar remains as per new requirement
+                    break;
+                case 'library':
+                    renderLibraryPage();
+                    showPage(libraryPage);
+                    activateSidebarMiniLibrary(); // Always activate mini-library for library page
+                    break;
+                case 'community':
+                    renderCommunityPage();
+                    showPage(communityPage);
+                    // Sidebar remains as per new requirement
+                    break;
+                case 'unreal-engine':
+                    renderUnrealEnginePage();
+                    showPage(unrealEnginePage);
+                    // Sidebar remains as per new requirement
+                    break;
+                case 'settings':
+                    renderSettingsPage();
+                    showPage(settingsPage);
+                    deactivateSidebarMiniLibrary(); // Settings is a different context, so deactivate
+                    break;
+                default:
+                    renderStorePage(); // Default to store page
+                    showPage(storePage);
+                    // Sidebar remains as per new requirement
+                    break;
+            }
+        }
+
+        /** Activates the sidebar mini-library view. */
+        function activateSidebarMiniLibrary() {
+            if (isSidebarMiniLibraryActive) return; // Prevent re-activation if already active
+
+            sidebar.classList.remove('hidden'); // Show the sidebar container
+
+            const miniLibraryContent = myLibraryGames.map(game => `
+                <div class="text-gray-300 hover:text-white p-1 rounded-md transition-colors duration-200 text-sm">
+                    ${game.title}
+                </div>
+            `).join('');
+            sidebarMiniLibrary.querySelector('div').innerHTML = miniLibraryContent;
+            isSidebarMiniLibraryActive = true;
+        }
+
+        /** Deactivates the sidebar mini-library view. */
+        function deactivateSidebarMiniLibrary() {
+            // Note: This function is still present but its calls have been adjusted
+            // based on the new requirement for persistent sidebar in library.
+            // It will only be called explicitly when navigating to 'settings'
+            // or if a future requirement needs to hide the sidebar for other reasons.
+            if (!isSidebarMiniLibraryActive) return; // Prevent de-activation if already inactive
+
+            sidebar.classList.add('hidden'); // Hide the sidebar container
+            sidebarMiniLibrary.querySelector('div').innerHTML = ''; // Clear content
+            isSidebarMiniLibraryActive = false;
+        }
+
+
+        // --- Event Listeners and Initial Load ---
+
+        // Splash screen logic
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                splashScreen.classList.add('hidden');
+                document.body.style.overflow = 'auto'; // Re-enable body scroll
+                appContainer.classList.remove('hidden');
+                loadPage('store'); // Load store page after splash
+            }, 1000); // 1 second delay
+        });
+
+        // Top Navigation clicks
+        navItemsTop.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = item.dataset.page;
+                loadPage(page);
+            });
+        });
+
+        // Account icon and settings dropdown
+        accountIconButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent document click listener from immediately closing it
+            accountDropdown.classList.toggle('hidden');
+        });
+
+        settingsOption.addEventListener('click', (e) => {
+            e.preventDefault();
+            loadPage('settings');
+            accountDropdown.classList.add('hidden'); // Hide dropdown after clicking settings
+        });
+
+        // Close dropdown if clicking outside
+        document.addEventListener('click', (e) => {
+            if (!accountIconButton.contains(e.target) && !accountDropdown.contains(e.target)) {
+                accountDropdown.classList.add('hidden');
+            }
+        });
+
+
+        // Chatbot functionality
+        helpButton.addEventListener('click', () => {
+            chatbotModal.classList.remove('hidden');
+            chatHistory = []; // Reset chat history on open
+            chatMessages.innerHTML = `
+                <div class="flex justify-start">
+                    <div class="bg-gray-700 text-white p-3 rounded-lg max-w-[80%] shadow-md">
+                        How can I help today? For example: "need help with a refund", "trying to solve a crash."
+                    </div>
+                </div>
+            `;
+            chatInput.focus();
+        });
+
+        closeChatbotButton.addEventListener('click', () => {
+            chatbotModal.classList.add('hidden');
+        });
+
+        // Function to add a message to the chat display
+        function addMessageToChat(message, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('flex', sender === 'user' ? 'justify-end' : 'justify-start');
+            messageDiv.innerHTML = `
+                <div class="${sender === 'user' ? 'bg-blue-600' : 'bg-gray-700'} text-white p-3 rounded-lg max-w-[80%] shadow-md">
+                    ${message}
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to bottom
+        }
+
+        // Function to send message to LLM (Gemini API)
+        async function sendMessageToGemini(prompt) {
+            addMessageToChat(prompt, 'user');
+            chatInput.value = ''; // Clear input immediately
+            sendChatButton.disabled = true; // Disable send button
+            chatInput.placeholder = "Typing..."; // Show typing indicator
+
+            // Add user message to history
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { contents: chatHistory };
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            try {
+                let response;
+                let result;
+                let retryCount = 0;
+                const maxRetries = 5;
+                const baseDelay = 1000; // 1 second
+
+                while (retryCount < maxRetries) {
+                    response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        result = await response.json();
+                        break; // Success, break out of retry loop
+                    } else if (response.status === 429 || response.status >= 500) {
+                        // Too Many Requests or Server Error, retry with exponential backoff
+                        const delay = baseDelay * Math.pow(2, retryCount);
+                        retryCount++;
+                        await new Promise(res => setTimeout(res, delay));
+                        // console.error(`Retry ${retryCount} for API call due to status: ${response.status}`);
+                    } else {
+                        // Other client-side errors, don't retry
+                        throw new Error(`API error: ${response.status} - ${response.statusText}`);
+                    }
+                }
+
+                if (!result) {
+                    throw new Error("Failed to get a successful response after multiple retries.");
+                }
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const botResponseText = result.candidates[0].content.parts[0].text;
+                    addMessageToChat(botResponseText, 'bot');
+                    // Add bot message to history
+                    chatHistory.push({ role: "model", parts: [{ text: botResponseText }] });
+                } else {
+                    addMessageToChat("Sorry, I couldn't get a response from the AI. Please try again.", 'bot');
+                }
+            } catch (error) {
+                console.error("Error communicating with Gemini API:", error);
+                addMessageToChat("I'm having trouble connecting right now. Please try again later.", 'bot');
+            } finally {
+                sendChatButton.disabled = false; // Re-enable send button
+                chatInput.placeholder = "Type your message..."; // Reset placeholder
+            }
+        }
+
+        // Send chat on button click or Enter key
+        sendChatButton.addEventListener('click', () => {
+            const message = chatInput.value.trim();
+            if (message) {
+                sendMessageToGemini(message);
+            }
+        });
+
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const message = chatInput.value.trim();
+                if (message) {
+                    sendMessageToGemini(message);
+                }
+            }
+        });
+
+        // Go Offline Modal functionality
+        closeOfflineModal.addEventListener('click', () => {
+            goOfflineModal.classList.add('hidden');
+        });
+
+        cancelOfflineBtn.addEventListener('click', () => {
+            goOfflineModal.classList.add('hidden');
+        });
+
+        confirmOfflineBtn.addEventListener('click', () => {
+            // Using custom message modal instead of alert
+            showCustomMessage('Offline Mode Activated', 'Epic Games is now attempting to restart in offline mode. Please note that online-only games will still require an internet connection.');
+            goOfflineModal.classList.add('hidden');
+            loadPage('store'); // Redirect to store or some offline specific view
+        });
+
+        // --- Move Game Modal Functions ---
+        let currentGameToMoveId = null;
+
+        /**
+         * Opens the move game modal for a specific game.
+         * @param {string} gameId - The ID of the game to move.
+         * @param {string} gameTitle - The title of the game to move.
+         */
+        function openMoveGameModal(gameId, gameTitle) {
+            currentGameToMoveId = gameId;
+            moveGameTitleSpan.textContent = gameTitle;
+            moveGameModal.classList.remove('hidden');
+
+            // Reset modal state
+            moveProgressContainer.classList.add('hidden');
+            moveProgressBar.style.width = '0%';
+            moveStatusMessage.classList.add('hidden');
+            moveStatusMessage.textContent = '';
+            driveOptionsDiv.classList.remove('hidden');
+            moveGameModalOkBtn.classList.add('hidden'); // Hide OK button initially
+            // Re-enable all drive buttons and reset their styles
+            driveOptionsDiv.querySelectorAll('.drive-select-btn').forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('bg-gray-500', 'cursor-not-allowed', 'bg-blue-600');
+                btn.classList.add('bg-gray-700', 'hover:bg-gray-600');
+                if (btn.dataset.drive === 'D') { // Re-apply blue for Drive D as the "target"
+                     btn.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                     btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                } else if (btn.dataset.drive === 'C') { // Style current drive
+                    btn.classList.add('bg-gray-700', 'hover:bg-gray-600');
+                }
+            });
+
+            if (lucide) {
+                lucide.createIcons();
+            }
+        }
+
+        /** Closes the move game modal. */
+        function closeMoveGameModal() {
+            moveGameModal.classList.add('hidden');
+            currentGameToMoveId = null; // Clear game ID
+        }
+
+        // Close button for move game modal
+        closeMoveGameModalBtn.addEventListener('click', closeMoveGameModal);
+        moveGameModalOkBtn.addEventListener('click', closeMoveGameModal);
+
+
+        // Event listener for drive selection buttons
+        driveOptionsDiv.addEventListener('click', (e) => {
+            if (e.target.classList.contains('drive-select-btn')) {
+                const selectedDrive = e.target.dataset.drive;
+                if (selectedDrive === 'C') { // Prevent moving to current drive
+                    return;
+                }
+
+                // Disable drive selection buttons
+                driveOptionsDiv.querySelectorAll('.drive-select-btn').forEach(btn => {
+                    btn.disabled = true;
+                    btn.classList.remove('hover:bg-gray-600', 'hover:bg-blue-700');
+                    btn.classList.add('bg-gray-500', 'cursor-not-allowed');
+                });
+                driveOptionsDiv.classList.add('hidden'); // Hide drive options
+
+                moveProgressContainer.classList.remove('hidden');
+                targetDriveDisplay.textContent = selectedDrive;
+                moveProgressBar.style.width = '0%';
+                moveStatusMessage.classList.add('hidden');
+                moveStatusMessage.textContent = '';
+
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 10;
+                    moveProgressBar.style.width = `${progress}%`;
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            moveStatusMessage.textContent = `Move Successful! ${moveGameTitleSpan.textContent} has been moved to Drive ${selectedDrive}:`;
+                            moveStatusMessage.classList.remove('hidden');
+                            moveGameModalOkBtn.classList.remove('hidden'); // Show OK button after success
+                        }, 200); // Short delay before showing success message
+                    }
+                }, 150); // Simulate progress over 1.5 seconds (10 intervals * 150ms)
+            }
+        });
+
+    </script>
+</body>
+</html>
