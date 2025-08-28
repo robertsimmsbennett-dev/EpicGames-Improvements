@@ -266,7 +266,7 @@
             }
         });
 
-        // Function to generate a random hex color
+        // Function to generate a random hex color (not used for placeholders anymore)
         function getRandomHexColor() {
             const letters = '0123456789ABCDEF';
             let color = '';
@@ -278,35 +278,35 @@
 
         // Mock Game Data
         const mockGames = [
-            { id: 'game1', title: 'Cyberpunk 2077', developer: 'CD Projekt RED', genre: 'RPG, Action', price: 59.99, discountPrice: 29.99, isFree: false, releaseYear: 2020, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff`,
-                // heroVideoUrl: 'https://www.youtube.com/embed/P99qJGrpn5w?autoplay=1&mute=1', // Removed due to 'Video unavailable'
+            { id: 'game1', title: 'Cyberpunk 2077', developer: 'CD Projekt RED', genre: 'RPG, Action', price: 59.99, discountPrice: 29.99, isFree: false, releaseYear: 2020,
+                // imageUrl removed
                 description: 'Cyberpunk 2077 is an open-world, action-adventure RPG set in the megalopolis of Night City, where you play as a cyberpunk mercenary wrapped up in a one-of-a-kind fight for survival. Upgraded with a new district, an overhauled skill system, and a ton of new content, this is the ultimate Cyberpunk 2077 experience. Become an urban mercenary endowed with cybernetic enhancements and build your legend on the streets of Night City. Enjoy the expanded story with the Phantom Liberty expansion and explore the dangerous district of Dogtown.'
             },
-            { id: 'game2', title: 'Fortnite', developer: 'Epic Games', genre: 'Battle Royale, Shooter', price: 0.00, isFree: true, releaseYear: 2017, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game3', title: 'Alan Wake 2', developer: 'Remedy Entertainment', genre: 'Survival Horror', price: 49.99, discountPrice: 39.99, isFree: false, releaseYear: 2023, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game4', title: 'Gears 5', developer: 'The Coalition', genre: 'Third-Person Shooter', price: 39.99, discountPrice: 19.99, isFree: false, releaseYear: 2019, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game5', title: 'Grand Theft Auto V', developer: 'Rockstar Games', genre: 'Action-Adventure', price: 29.99, discountPrice: 14.99, isFree: false, releaseYear: 2013, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game6', title: 'Control', developer: 'Remedy Entertainment', genre: 'Action-Adventure', price: 29.99, discountPrice: 9.99, isFree: false, releaseYear: 2019, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game7', title: 'Red Dead Redemption 2', developer: 'Rockstar Games', genre: 'Action-Adventure', price: 59.99, discountPrice: 35.99, isFree: false, releaseYear: 2018, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game8', title: 'Baldur\'s Gate 3', developer: 'Larian Studios', genre: 'RPG', price: 59.99, isFree: false, releaseYear: 2023, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game9', 'title': 'Horizon Forbidden West', developer: 'Guerrilla Games', genre: 'Action RPG', price: 59.99, discountPrice: 40.00, isFree: false, releaseYear: 2022, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game10', 'title': 'God of War Ragnarök', developer: 'Santa Monica Studio', genre: 'Action-Adventure', price: 59.99, discountPrice: 45.00, isFree: false, releaseYear: 2022, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game11', 'title': 'Assassin\'s Creed Valhalla', developer: 'Ubisoft', genre: 'Action RPG', price: 49.99, discountPrice: 20.00, isFree: false, releaseYear: 2020, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game12', 'title': 'Marvel\'s Spider-Man: Miles Morales', developer: 'Insomniac Games', genre: 'Action-Adventure', price: 49.99, discountPrice: 25.00, isFree: false, releaseYear: 2020, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game13', 'title': 'The Witcher 3: Wild Hunt', developer: 'CD Projekt RED', genre: 'RPG', price: 39.99, discountPrice: 9.99, isFree: false, releaseYear: 2015, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game14', 'title': 'DOOM Eternal', developer: 'id Software', genre: 'FPS', price: 39.99, discountPrice: 15.00, isFree: false, releaseYear: 2020, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game15', 'title': 'Dying Light 2 Stay Human', developer: 'Techland', genre: 'Action RPG, Survival Horror', price: 59.99, discountPrice: 30.00, isFree: false, releaseYear: 2022, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game16', 'title': 'Starfield', developer: 'Bethesda Game Studios', genre: 'RPG', price: 69.99, discountPrice: 50.00, isFree: false, releaseYear: 2023, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game17', 'title': 'Halo Infinite', developer: '343 Industries', genre: 'FPS', price: 59.99, discountPrice: 20.00, isFree: false, releaseYear: 2021, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game18', 'title': 'Resident Evil 4 Remake', developer: 'Capcom', genre: 'Survival Horror', price: 59.99, discountPrice: 40.00, isFree: false, releaseYear: 2023, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game19', 'title': 'Elden Ring', developer: 'FromSoftware', genre: 'Action RPG', price: 59.99, discountPrice: 45.00, isFree: false, releaseYear: 2022, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game20', 'title': 'Stray', developer: 'BlueTwelve Studio', genre: 'Adventure', price: 29.99, discountPrice: 19.99, isFree: false, releaseYear: 2022, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game2', title: 'Fortnite', developer: 'Epic Games', genre: 'Battle Royale, Shooter', price: 0.00, isFree: true, releaseYear: 2017 },
+            { id: 'game3', title: 'Alan Wake 2', developer: 'Remedy Entertainment', genre: 'Survival Horror', price: 49.99, discountPrice: 39.99, isFree: false, releaseYear: 2023 },
+            { id: 'game4', title: 'Gears 5', developer: 'The Coalition', genre: 'Third-Person Shooter', price: 39.99, discountPrice: 19.99, isFree: false, releaseYear: 2019 },
+            { id: 'game5', title: 'Grand Theft Auto V', developer: 'Rockstar Games', genre: 'Action-Adventure', price: 29.99, discountPrice: 14.99, isFree: false, releaseYear: 2013 },
+            { id: 'game6', title: 'Control', developer: 'Remedy Entertainment', genre: 'Action-Adventure', price: 29.99, discountPrice: 9.99, isFree: false, releaseYear: 2019 },
+            { id: 'game7', title: 'Red Dead Redemption 2', developer: 'Rockstar Games', genre: 'Action-Adventure', price: 59.99, discountPrice: 35.99, isFree: false, releaseYear: 2018 },
+            { id: 'game8', title: 'Baldur\'s Gate 3', developer: 'Larian Studios', genre: 'RPG', price: 59.99, isFree: false, releaseYear: 2023 },
+            { id: 'game9', 'title': 'Horizon Forbidden West', developer: 'Guerrilla Games', genre: 'Action RPG', price: 59.99, discountPrice: 40.00, isFree: false, releaseYear: 2022 },
+            { id: 'game10', 'title': 'God of War Ragnarök', developer: 'Santa Monica Studio', genre: 'Action-Adventure', price: 59.99, discountPrice: 45.00, isFree: false, releaseYear: 2022 },
+            { id: 'game11', 'title': 'Assassin\'s Creed Valhalla', developer: 'Ubisoft', genre: 'Action RPG', price: 49.99, discountPrice: 20.00, isFree: false, releaseYear: 2020 },
+            { id: 'game12', 'title': 'Marvel\'s Spider-Man: Miles Morales', developer: 'Insomniac Games', genre: 'Action-Adventure', price: 49.99, discountPrice: 25.00, isFree: false, releaseYear: 2020 },
+            { id: 'game13', 'title': 'The Witcher 3: Wild Hunt', developer: 'CD Projekt RED', genre: 'RPG', price: 39.99, discountPrice: 9.99, isFree: false, releaseYear: 2015 },
+            { id: 'game14', 'title': 'DOOM Eternal', developer: 'id Software', genre: 'FPS', price: 39.99, discountPrice: 15.00, isFree: false, releaseYear: 2020 },
+            { id: 'game15', 'title': 'Dying Light 2 Stay Human', developer: 'Techland', genre: 'Action RPG, Survival Horror', price: 59.99, discountPrice: 30.00, isFree: false, releaseYear: 2022 },
+            { id: 'game16', 'title': 'Starfield', developer: 'Bethesda Game Studios', genre: 'RPG', price: 69.99, discountPrice: 50.00, isFree: false, releaseYear: 2023 },
+            { id: 'game17', 'title': 'Halo Infinite', developer: '343 Industries', genre: 'FPS', price: 59.99, discountPrice: 20.00, isFree: false, releaseYear: 2021 },
+            { id: 'game18', 'title': 'Resident Evil 4 Remake', developer: 'Capcom', genre: 'Survival Horror', price: 59.99, discountPrice: 40.00, isFree: false, releaseYear: 2023 },
+            { id: 'game19', 'title': 'Elden Ring', developer: 'FromSoftware', genre: 'Action RPG', price: 59.99, discountPrice: 45.00, isFree: false, releaseYear: 2022 },
+            { id: 'game20', 'title': 'Stray', developer: 'BlueTwelve Studio', genre: 'Adventure', price: 29.99, discountPrice: 19.99, isFree: false, releaseYear: 2022 },
             // Placeholder 2025 games for the hero rail
-            { id: 'game21', 'title': 'Expedition 33', developer: 'Bad Robot Games', genre: 'Adventure', price: 69.99, releaseYear: 2025, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game22', 'title': 'Indiana Jones and the Great Circle', developer: 'MachineGames', genre: 'Action-Adventure', price: 59.99, releaseYear: 2025, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game23', 'title': 'The Witcher 4', developer: 'CD Projekt RED', genre: 'RPG', price: 69.99, releaseYear: 2025, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game24', 'title': 'Monster Hunter Wilds', developer: 'Capcom', genre: 'Action RPG', price: 69.99, releaseYear: 2025, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
-            { id: 'game25', 'title': 'Grand Theft Auto VI', developer: 'Rockstar Games', genre: 'Action-Adventure', price: 79.99, releaseYear: 2025, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game21', 'title': 'Expedition 33', developer: 'Bad Robot Games', genre: 'Adventure', price: 69.99, releaseYear: 2025 },
+            { id: 'game22', 'title': 'Indiana Jones and the Great Circle', developer: 'MachineGames', genre: 'Action-Adventure', price: 59.99, releaseYear: 2025 },
+            { id: 'game23', 'title': 'The Witcher 4', developer: 'CD Projekt RED', genre: 'RPG', price: 69.99, releaseYear: 2025 },
+            { id: 'game24', 'title': 'Monster Hunter Wilds', developer: 'Capcom', genre: 'Action RPG', price: 69.99, releaseYear: 2025 },
+            { id: 'game25', 'title': 'Grand Theft Auto VI', developer: 'Rockstar Games', genre: 'Action-Adventure', price: 79.99, releaseYear: 2025 },
         ];
 
         // Mock Library Data (a subset of mockGames)
@@ -396,10 +396,9 @@
                     ? `<span class="line-through text-gray-500 mr-1 text-xs">£${game.price.toFixed(2)}</span><span class="text-green-400 font-bold text-xs">£${game.discountPrice.toFixed(2)}</span>`
                     : `<span class="text-white font-bold text-xs">£${game.price.toFixed(2)}</span>`;
 
-            // Adjusted card and image classes for smaller tiles
             return `
                 <div class="game-card bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer flex flex-col" data-game-id="${game.id}">
-                    <img src="${game.imageUrl}" alt="${game.title}" onerror="this.onerror=null;this.src='https://placehold.co/${getRandomHexColor()}/eee';" class="w-full h-28 object-cover">
+                    <div class="w-full h-28 object-cover bg-gray-700 flex items-center justify-center"></div> <!-- Solid background placeholder -->
                     <div class="p-2 flex flex-col justify-between flex-grow">
                         <h3 class="text-lg font-semibold text-white leading-tight">${game.title}</h3>
                         <p class="text-sm text-gray-400 mt-1">${game.developer}</p>
@@ -424,7 +423,7 @@
 
             return `
                 <div class="flex items-center bg-gray-700 rounded-lg p-3 shadow-md hover:bg-gray-600 transition-colors duration-200" data-game-id="${game.id}">
-                    <img src="${fullGame.imageUrl || `https://placehold.co/${getRandomHexColor()}/eee`}" alt="${game.title}" class="w-16 h-10 object-cover rounded-md mr-4">
+                    <div class="w-16 h-10 object-cover rounded-md mr-4 bg-gray-700 flex items-center justify-center"></div> <!-- Solid background placeholder -->
                     <div class="flex-grow">
                         <h3 class="text-base font-semibold text-white">${game.title}</h3>
                         <p class="text-xs text-gray-400">${fullGame.developer || 'N/A'}</p>
@@ -448,7 +447,6 @@
             `;
         }
 
-
         /**
          * Renders a game tile for the library tile view.
          * @param {object} game - Game object.
@@ -458,7 +456,7 @@
             const fullGame = mockGames.find(g => g.id === game.id) || {};
             return `
                 <div class="bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center p-4">
-                    <img src="${fullGame.imageUrl || `https://placehold.co/150x100/${getRandomHexColor()}/eee`}" alt="${game.title}" class="w-full h-32 object-cover rounded-md mb-3">
+                    <div class="w-full h-32 object-cover rounded-md mb-3 bg-gray-700 flex items-center justify-center"></div> <!-- Solid background placeholder -->
                     <h3 class="text-lg font-semibold text-white text-center">${game.title}</h3>
                     <p class="text-sm text-gray-400 text-center">${game.installed ? 'Installed' : 'Not Installed'}</p>
                     <button class="mt-3 w-full p-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors duration-200">Launch</button>
@@ -489,7 +487,7 @@
 
                 return `
                     <div class="game-card bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer ${cardClass}" data-game-id="${game.id}">
-                        <img src="${game.imageUrl}" alt="${game.title}" onerror="this.onerror=null;this.src='https://placehold.co/${getRandomHexColor()}/eee';" class="w-full ${imgClass} object-cover">
+                        <div class="w-full ${imgClass} object-cover bg-gray-700 flex items-center justify-center"></div> <!-- Solid background placeholder -->
                         <div class="p-2 flex flex-col justify-between flex-grow">
                             <h3 class="text-lg font-semibold text-white leading-tight">${game.title}</h3>
                             <p class="text-sm text-gray-400 mt-1">${game.developer}</p>
@@ -760,7 +758,7 @@
                                 <iframe src="${game.heroVideoUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                             </div>
                         ` : `
-                            <img src="${game.imageUrl}" alt="${game.title}" class="w-full h-96 object-cover">
+                            <div class="w-full h-96 object-cover bg-gray-700 flex items-center justify-center"></div> <!-- Solid background placeholder -->
                         `}
                         <div class="absolute inset-0 p-8 bg-gradient-to-t from-black to-transparent w-full flex flex-col justify-between">
                             <div> <!-- Container for top-aligned title -->
@@ -830,7 +828,7 @@
 
                     <!-- Game Summary & Promotion -->
                     <div class="flex items-center bg-gray-800 p-6 rounded-lg shadow-md">
-                        <img src="${game.imageUrl}" alt="${game.title}" class="w-24 h-16 object-cover rounded-md mr-6">
+                        <div class="w-24 h-16 object-cover rounded-md mr-6 bg-gray-700 flex items-center justify-center"></div> <!-- Solid background placeholder -->
                         <div>
                             <h2 class="text-2xl font-semibold text-white">${game.title}</h2>
                             <p class="text-gray-300 mt-1">Get ready for an epic adventure! Total: <span class="text-green-400 font-bold">£${price.toFixed(2)}</span></p>
@@ -1084,7 +1082,7 @@
                 case 'community':
                     renderCommunityPage();
                     break;
-                case 'unreal-engine':
+                    case 'unreal-engine':
                     renderUnrealEnginePage();
                     break;
                 // library and settings are handled directly in loadPage for specific sidebar logic
