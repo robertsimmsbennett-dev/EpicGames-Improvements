@@ -90,7 +90,7 @@
 
     <!-- Splash Screen -->
     <div id="splash-screen" class="splash-screen">
-        <img src="https://placehold.co/1200x630/4A4A4A/FFFFFF?text=EPIC+GAMES" alt="Epic Games Store Logo" class="w-64">
+        <img src="https://placehold.co/1200x630/4A4A4A/FFFFFF?text=EPIC+GAMES" class="w-64">
     </div>
 
     <!-- Main App Container -->
@@ -98,7 +98,7 @@
         <!-- Top Navigation Bar -->
         <header class="bg-gray-900 p-4 flex items-center justify-between shadow-lg z-20">
             <div class="flex items-center">
-                <img src="https://placehold.co/40x40/4A4A4A/FFFFFF?text=E" alt="Epic Logo" class="w-10 h-10 rounded-md mr-4">
+                <img src="https://placehold.co/40x40/4A4A4A/FFFFFF?text=E" class="w-10 h-10 rounded-md mr-4">
                 <nav id="main-nav-top" class="flex space-x-6">
                     <a href="#" class="nav-item-top flex items-center p-2 text-lg font-semibold text-gray-300 hover:text-white rounded-md transition-colors duration-200" data-page="store">
                         Store
@@ -128,12 +128,12 @@
         </header>
 
         <div class="flex flex-grow">
-            <!-- Left Sidebar for mini-library (only shown for Library List View) -->
+            <!-- Left Sidebar for mini-library -->
             <aside id="sidebar" class="w-64 bg-gray-900 p-4 flex flex-col shadow-lg rounded-r-lg transition-all duration-300 ease-in-out hidden">
-                <div id="sidebar-mini-library" class="mt-2 pt-4 border-t border-gray-700">
-                    <h3 class="text-gray-400 text-sm font-semibold mb-2">My Games</h3>
-                    <input type="text" placeholder="Search library..." class="w-full p-2 bg-gray-800 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3">
-                    <div class="space-y-1 overflow-y-auto max-h-48 custom-scrollbar">
+                <div id="sidebar-mini-library" class="mt-2">
+                    <!-- Search input for sidebar -->
+                    <input type="text" id="sidebar-library-search" placeholder="Search library..." class="w-full p-2 bg-gray-800 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3">
+                    <div class="space-y-1 overflow-y-auto max-h-[calc(100vh-14rem)] custom-scrollbar">
                         <!-- Mini library games will be injected here -->
                     </div>
                 </div>
@@ -266,35 +266,47 @@
             }
         });
 
+        // Function to generate a random hex color
+        function getRandomHexColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
         // Mock Game Data
         const mockGames = [
-            { id: 'game1', title: 'Cyberpunk 2077', developer: 'CD Projekt RED', genre: 'RPG, Action', price: 59.99, discountPrice: 29.99, isFree: false, releaseYear: 2020, imageUrl: 'https://placehold.co/400x250/000/fff?text=Cyberpunk+2077',
-                heroVideoUrl: 'https://www.youtube.com/embed/P99qJGrpn5w?autoplay=1&mute=1', // Example YouTube embed
+            { id: 'game1', title: 'Cyberpunk 2077', developer: 'CD Projekt RED', genre: 'RPG, Action', price: 59.99, discountPrice: 29.99, isFree: false, releaseYear: 2020, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff`,
+                // heroVideoUrl: 'https://www.youtube.com/embed/P99qJGrpn5w?autoplay=1&mute=1', // Removed due to 'Video unavailable'
                 description: 'Cyberpunk 2077 is an open-world, action-adventure RPG set in the megalopolis of Night City, where you play as a cyberpunk mercenary wrapped up in a one-of-a-kind fight for survival. Upgraded with a new district, an overhauled skill system, and a ton of new content, this is the ultimate Cyberpunk 2077 experience. Become an urban mercenary endowed with cybernetic enhancements and build your legend on the streets of Night City. Enjoy the expanded story with the Phantom Liberty expansion and explore the dangerous district of Dogtown.'
             },
-            { id: 'game2', title: 'Fortnite', developer: 'Epic Games', genre: 'Battle Royale, Shooter', price: 0.00, isFree: true, releaseYear: 2017, imageUrl: 'https://placehold.co/400x250/000/fff?text=Fortnite' },
-            { id: 'game3', title: 'Alan Wake 2', developer: 'Remedy Entertainment', genre: 'Survival Horror', price: 49.99, discountPrice: 39.99, isFree: false, releaseYear: 2023, imageUrl: 'https://placehold.co/400x250/000/fff?text=Alan+Wake+2' },
-            { id: 'game4', title: 'Gears 5', developer: 'The Coalition', genre: 'Third-Person Shooter', price: 39.99, discountPrice: 19.99, isFree: false, releaseYear: 2019, imageUrl: 'https://placehold.co/400x250/000/fff?text=Gears+5' },
-            { id: 'game5', title: 'Grand Theft Auto V', developer: 'Rockstar Games', genre: 'Action-Adventure', price: 29.99, discountPrice: 14.99, isFree: false, releaseYear: 2013, imageUrl: 'https://placehold.co/400x250/000/fff?text=GTA+V' },
-            { id: 'game6', title: 'Control', developer: 'Remedy Entertainment', genre: 'Action-Adventure', price: 29.99, discountPrice: 9.99, isFree: false, releaseYear: 2019, imageUrl: 'https://placehold.co/400x250/000/fff?text=Control' },
-            { id: 'game7', title: 'Red Dead Redemption 2', developer: 'Rockstar Games', genre: 'Action-Adventure', price: 59.99, discountPrice: 35.99, isFree: false, releaseYear: 2018, imageUrl: 'https://placehold.co/400x250/000/fff?text=RDR2' },
-            { id: 'game8', title: 'Baldur\'s Gate 3', developer: 'Larian Studios', genre: 'RPG', price: 59.99, isFree: false, releaseYear: 2023, imageUrl: 'https://placehold.co/400x250/000/fff?text=Baldurs+Gate+3' },
-            { id: 'game9', 'title': 'Horizon Forbidden West', developer: 'Guerrilla Games', genre: 'Action RPG', price: 59.99, discountPrice: 40.00, isFree: false, releaseYear: 2022, imageUrl: 'https://placehold.co/400x250/000/fff?text=Horizon+FW' },
-            { id: 'game10', 'title': 'God of War Ragnarök', developer: 'Santa Monica Studio', genre: 'Action-Adventure', price: 59.99, discountPrice: 45.00, isFree: false, releaseYear: 2022, imageUrl: 'https://placehold.co/400x250/000/fff?text=God+of+War' },
-            { id: 'game11', 'title': 'Assassin\'s Creed Valhalla', developer: 'Ubisoft', genre: 'Action RPG', price: 49.99, discountPrice: 20.00, isFree: false, releaseYear: 2020, imageUrl: 'https://placehold.co/400x250/000/fff?text=AC+Valhalla' },
-            { id: 'game12', 'title': 'Marvel\'s Spider-Man: Miles Morales', developer: 'Insomniac Games', genre: 'Action-Adventure', price: 49.99, discountPrice: 25.00, isFree: false, releaseYear: 2020, imageUrl: 'https://placehold.co/400x250/000/fff?text=Spider-Man+MM' },
-            { id: 'game13', 'title': 'The Witcher 3: Wild Hunt', developer: 'CD Projekt RED', genre: 'RPG', price: 39.99, discountPrice: 9.99, isFree: false, releaseYear: 2015, imageUrl: 'https://placehold.co/400x250/000/fff?text=The+Witcher+3' },
-            { id: 'game14', 'title': 'DOOM Eternal', developer: 'id Software', genre: 'FPS', price: 39.99, discountPrice: 15.00, isFree: false, releaseYear: 2020, imageUrl: 'https://placehold.co/400x250/000/fff?text=DOOM+Eternal' },
-            { id: 'game15', 'title': 'Dying Light 2 Stay Human', developer: 'Techland', genre: 'Action RPG, Survival Horror', price: 59.99, discountPrice: 30.00, isFree: false, releaseYear: 2022, imageUrl: 'https://placehold.co/400x250/000/fff?text=Dying+Light+2' },
-            { id: 'game16', 'title': 'Starfield', developer: 'Bethesda Game Studios', genre: 'RPG', price: 69.99, discountPrice: 50.00, isFree: false, releaseYear: 2023, imageUrl: 'https://placehold.co/400x250/000/fff?text=Starfield' },
-            { id: 'game17', 'title': 'Halo Infinite', developer: '343 Industries', genre: 'FPS', price: 59.99, discountPrice: 20.00, isFree: false, releaseYear: 2021, imageUrl: 'https://placehold.co/400x250/000/fff?text=Halo+Infinite' },
-            { id: 'game18', 'title': 'Resident Evil 4 Remake', developer: 'Capcom', genre: 'Survival Horror', price: 59.99, discountPrice: 40.00, isFree: false, releaseYear: 2023, imageUrl: 'https://placehold.co/400x250/000/fff?text=RE4+Remake' },
-            { id: 'game19', 'title': 'Elden Ring', developer: 'FromSoftware', genre: 'Action RPG', price: 59.99, discountPrice: 45.00, isFree: false, releaseYear: 2022, imageUrl: 'https://placehold.co/400x250/000/fff?text=Elden+Ring' },
-            { id: 'game20', 'title': 'Stray', developer: 'BlueTwelve Studio', genre: 'Adventure', price: 29.99, discountPrice: 19.99, isFree: false, releaseYear: 2022, imageUrl: 'https://placehold.co/400x250/000/fff?text=Stray' },
-            { id: 'game21', 'title': 'New Game 2025 A', developer: 'Developer X', genre: 'Action', price: 69.99, releaseYear: 2025, imageUrl: 'https://placehold.co/400x250/000/fff?text=2025+Game+A' },
-            { id: 'game22', 'title': 'New Game 2025 B', developer: 'Developer Y', genre: 'Adventure', price: 59.99, releaseYear: 2025, imageUrl: 'https://placehold.co/400x250/000/fff?text=2025+Game+B' },
-            { id: 'game23', 'title': 'New Game 2025 C', developer: 'Developer Z', genre: 'RPG', price: 69.99, releaseYear: 2025, imageUrl: 'https://placehold.co/400x250/000/fff?text=2025+Game+C' },
-            { id: 'game24', 'title': 'New Game 2025 D', developer: 'Developer W', genre: 'Strategy', price: 49.99, releaseYear: 2025, imageUrl: 'https://placehold.co/400x250/000/fff?text=2025+Game+D' },
+            { id: 'game2', title: 'Fortnite', developer: 'Epic Games', genre: 'Battle Royale, Shooter', price: 0.00, isFree: true, releaseYear: 2017, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game3', title: 'Alan Wake 2', developer: 'Remedy Entertainment', genre: 'Survival Horror', price: 49.99, discountPrice: 39.99, isFree: false, releaseYear: 2023, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game4', title: 'Gears 5', developer: 'The Coalition', genre: 'Third-Person Shooter', price: 39.99, discountPrice: 19.99, isFree: false, releaseYear: 2019, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game5', title: 'Grand Theft Auto V', developer: 'Rockstar Games', genre: 'Action-Adventure', price: 29.99, discountPrice: 14.99, isFree: false, releaseYear: 2013, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game6', title: 'Control', developer: 'Remedy Entertainment', genre: 'Action-Adventure', price: 29.99, discountPrice: 9.99, isFree: false, releaseYear: 2019, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game7', title: 'Red Dead Redemption 2', developer: 'Rockstar Games', genre: 'Action-Adventure', price: 59.99, discountPrice: 35.99, isFree: false, releaseYear: 2018, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game8', title: 'Baldur\'s Gate 3', developer: 'Larian Studios', genre: 'RPG', price: 59.99, isFree: false, releaseYear: 2023, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game9', 'title': 'Horizon Forbidden West', developer: 'Guerrilla Games', genre: 'Action RPG', price: 59.99, discountPrice: 40.00, isFree: false, releaseYear: 2022, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game10', 'title': 'God of War Ragnarök', developer: 'Santa Monica Studio', genre: 'Action-Adventure', price: 59.99, discountPrice: 45.00, isFree: false, releaseYear: 2022, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game11', 'title': 'Assassin\'s Creed Valhalla', developer: 'Ubisoft', genre: 'Action RPG', price: 49.99, discountPrice: 20.00, isFree: false, releaseYear: 2020, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game12', 'title': 'Marvel\'s Spider-Man: Miles Morales', developer: 'Insomniac Games', genre: 'Action-Adventure', price: 49.99, discountPrice: 25.00, isFree: false, releaseYear: 2020, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game13', 'title': 'The Witcher 3: Wild Hunt', developer: 'CD Projekt RED', genre: 'RPG', price: 39.99, discountPrice: 9.99, isFree: false, releaseYear: 2015, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game14', 'title': 'DOOM Eternal', developer: 'id Software', genre: 'FPS', price: 39.99, discountPrice: 15.00, isFree: false, releaseYear: 2020, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game15', 'title': 'Dying Light 2 Stay Human', developer: 'Techland', genre: 'Action RPG, Survival Horror', price: 59.99, discountPrice: 30.00, isFree: false, releaseYear: 2022, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game16', 'title': 'Starfield', developer: 'Bethesda Game Studios', genre: 'RPG', price: 69.99, discountPrice: 50.00, isFree: false, releaseYear: 2023, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game17', 'title': 'Halo Infinite', developer: '343 Industries', genre: 'FPS', price: 59.99, discountPrice: 20.00, isFree: false, releaseYear: 2021, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game18', 'title': 'Resident Evil 4 Remake', developer: 'Capcom', genre: 'Survival Horror', price: 59.99, discountPrice: 40.00, isFree: false, releaseYear: 2023, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game19', 'title': 'Elden Ring', developer: 'FromSoftware', genre: 'Action RPG', price: 59.99, discountPrice: 45.00, isFree: false, releaseYear: 2022, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game20', 'title': 'Stray', developer: 'BlueTwelve Studio', genre: 'Adventure', price: 29.99, discountPrice: 19.99, isFree: false, releaseYear: 2022, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            // Placeholder 2025 games for the hero rail
+            { id: 'game21', 'title': 'Expedition 33', developer: 'Bad Robot Games', genre: 'Adventure', price: 69.99, releaseYear: 2025, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game22', 'title': 'Indiana Jones and the Great Circle', developer: 'MachineGames', genre: 'Action-Adventure', price: 59.99, releaseYear: 2025, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game23', 'title': 'The Witcher 4', developer: 'CD Projekt RED', genre: 'RPG', price: 69.99, releaseYear: 2025, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game24', 'title': 'Monster Hunter Wilds', developer: 'Capcom', genre: 'Action RPG', price: 69.99, releaseYear: 2025, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
+            { id: 'game25', 'title': 'Grand Theft Auto VI', developer: 'Rockstar Games', genre: 'Action-Adventure', price: 79.99, releaseYear: 2025, imageUrl: `https://placehold.co/${getRandomHexColor()}/fff` },
         ];
 
         // Mock Library Data (a subset of mockGames)
@@ -305,6 +317,8 @@
             { id: 'game5', title: 'Grand Theft Auto V', installed: true },
             { id: 'game8', title: 'Baldur\'s Gate 3', installed: true },
             { id: 'game13', title: 'The Witcher 3: Wild Hunt', installed: false },
+            { id: 'game21', title: 'Expedition 33', installed: true }, // Add new 2025 games to library data
+            { id: 'game22', title: 'Indiana Jones and the Great Circle', installed: false },
         ];
 
         // UI Element References
@@ -322,6 +336,7 @@
         const navItemsTop = document.querySelectorAll('.nav-item-top'); // Changed to nav-item-top
         const sidebar = document.getElementById('sidebar'); // This is now solely for the mini-library
         const sidebarMiniLibrary = document.getElementById('sidebar-mini-library');
+        const sidebarLibrarySearchInput = document.getElementById('sidebar-library-search'); // New search input
         const helpButton = document.getElementById('help-button');
         const chatbotModal = document.getElementById('chatbot-modal');
         const closeChatbotButton = document.getElementById('close-chatbot');
@@ -383,12 +398,12 @@
 
             // Adjusted card and image classes for smaller tiles
             return `
-                <div class="game-card bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer" data-game-id="${game.id}">
-                    <img src="${game.imageUrl}" alt="${game.title}" onerror="this.onerror=null;this.src='https://placehold.co/250x150/333/eee?text=Image+Unavailable';" class="w-full h-24 object-cover">
-                    <div class="p-2">
-                        <h3 class="text-md font-semibold text-white truncate">${game.title}</h3>
-                        <p class="text-xs text-gray-400 truncate">${game.developer}</p> <!-- Reduced font size for developer -->
-                        <div class="mt-1 text-right flex items-baseline justify-end space-x-1"> <!-- Ensure price text is visible and fits -->
+                <div class="game-card bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer flex flex-col" data-game-id="${game.id}">
+                    <img src="${game.imageUrl}" alt="${game.title}" onerror="this.onerror=null;this.src='https://placehold.co/${getRandomHexColor()}/eee';" class="w-full h-28 object-cover">
+                    <div class="p-2 flex flex-col justify-between flex-grow">
+                        <h3 class="text-lg font-semibold text-white leading-tight">${game.title}</h3>
+                        <p class="text-sm text-gray-400 mt-1">${game.developer}</p>
+                        <div class="mt-2 text-right flex items-baseline justify-end space-x-1">
                             ${priceHtml}
                         </div>
                     </div>
@@ -404,14 +419,17 @@
          */
         function renderGameListItem(game) {
             const fullGame = mockGames.find(g => g.id === game.id) || {};
+            const isInstalled = game.installed ? 'Installed' : 'Not Installed';
+            const statusColor = game.installed ? 'text-green-400' : 'text-gray-400';
+
             return `
                 <div class="flex items-center bg-gray-700 rounded-lg p-3 shadow-md hover:bg-gray-600 transition-colors duration-200" data-game-id="${game.id}">
-                    <img src="${fullGame.imageUrl || 'https://placehold.co/60x40/333/eee?text=Game'}" alt="${game.title}" class="w-16 h-10 object-cover rounded-md mr-4">
+                    <img src="${fullGame.imageUrl || `https://placehold.co/${getRandomHexColor()}/eee`}" alt="${game.title}" class="w-16 h-10 object-cover rounded-md mr-4">
                     <div class="flex-grow">
                         <h3 class="text-base font-semibold text-white">${game.title}</h3>
-                        <p class="text-xs text-gray-400">${fullGame.developer || 'N/A'}</p> <!-- Reduced font size for developer -->
+                        <p class="text-xs text-gray-400">${fullGame.developer || 'N/A'}</p>
                     </div>
-                    <span class="text-sm ${game.installed ? 'text-green-400' : 'text-gray-400'}">${game.installed ? 'Installed' : 'Not Installed'}</span>
+                    <span class="text-sm ${statusColor}">${isInstalled}</span>
                     <button class="ml-4 p-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors duration-200">Launch</button>
                     <div class="relative inline-block text-left">
                         <button class="game-settings-btn ml-2 p-2 bg-gray-600 hover:bg-gray-500 rounded-full text-white transition-colors duration-200" data-game-id="${game.id}" data-game-title="${game.title}">
@@ -430,6 +448,7 @@
             `;
         }
 
+
         /**
          * Renders a game tile for the library tile view.
          * @param {object} game - Game object.
@@ -439,7 +458,7 @@
             const fullGame = mockGames.find(g => g.id === game.id) || {};
             return `
                 <div class="bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center p-4">
-                    <img src="${fullGame.imageUrl || 'https://placehold.co/150x100/333/eee?text=Game'}" alt="${game.title}" class="w-full h-32 object-cover rounded-md mb-3">
+                    <img src="${fullGame.imageUrl || `https://placehold.co/150x100/${getRandomHexColor()}/eee`}" alt="${game.title}" class="w-full h-32 object-cover rounded-md mb-3">
                     <h3 class="text-lg font-semibold text-white text-center">${game.title}</h3>
                     <p class="text-sm text-gray-400 text-center">${game.installed ? 'Installed' : 'Not Installed'}</p>
                     <button class="mt-3 w-full p-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors duration-200">Launch</button>
@@ -457,8 +476,9 @@
          * @returns {string} HTML string for a game rail.
          */
         function renderGameRail(title, games, showDiscount = false, isHero = false) {
-            const cardClass = isHero ? 'min-w-[400px] h-64' : 'min-w-[150px] h-44';
-            const imgClass = isHero ? 'h-40' : 'h-24'; // Ensure consistent image height
+            // Adjust cardClass and imgClass for legibility
+            const cardClass = isHero ? 'min-w-[400px] flex flex-col' : 'min-w-[150px] flex flex-col';
+            const imgClass = isHero ? 'h-40' : 'h-28'; // Increased standard image height
 
             const gameCards = games.map(game => {
                 const priceHtml = game.isFree
@@ -469,11 +489,11 @@
 
                 return `
                     <div class="game-card bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer ${cardClass}" data-game-id="${game.id}">
-                        <img src="${game.imageUrl}" alt="${game.title}" onerror="this.onerror=null;this.src='https://placehold.co/250x150/333/eee?text=Image+Unavailable';" class="w-full ${imgClass} object-cover">
-                        <div class="p-2">
-                            <h3 class="text-md font-semibold text-white truncate">${game.title}</h3>
-                            <p class="text-xs text-gray-400 truncate">${game.developer}</p> <!-- Reduced font size for developer -->
-                            <div class="mt-1 text-right flex items-baseline justify-end space-x-1"> <!-- Added flex for better price layout -->
+                        <img src="${game.imageUrl}" alt="${game.title}" onerror="this.onerror=null;this.src='https://placehold.co/${getRandomHexColor()}/eee';" class="w-full ${imgClass} object-cover">
+                        <div class="p-2 flex flex-col justify-between flex-grow">
+                            <h3 class="text-lg font-semibold text-white leading-tight">${game.title}</h3>
+                            <p class="text-sm text-gray-400 mt-1">${game.developer}</p>
+                            <div class="mt-2 text-right flex items-baseline justify-end space-x-1">
                                 ${priceHtml}
                             </div>
                         </div>
@@ -495,12 +515,18 @@
 
         /** Renders the Store page content. */
         function renderStorePage() {
+            // New 2025 games specifically for the hero rail
+            const new2025Games = mockGames.filter(g =>
+                ['Expedition 33', 'Indiana Jones and the Great Circle', 'The Witcher 4', 'Monster Hunter Wilds', 'Grand Theft Auto VI']
+                .includes(g.title)
+            );
+
             storePage.innerHTML = `
                 <div class="mb-6 flex justify-center">
                     <input type="text" placeholder="Search store..." class="w-full max-w-lg p-3 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="space-y-8">
-                    ${renderGameRail('2025 Games', mockGames.filter(g => g.releaseYear === 2025).slice(0, 8), false, true)}
+                    ${renderGameRail('2025 Games', new2025Games, false, true)}
                     ${renderGameRail('Discover Something New (Action Games)', mockGames.filter(g => g.genre.includes('Action')).slice(0, 10))}
                     ${renderGameRail('Featured Discounts', mockGames.filter(g => g.discountPrice && g.discountPrice < g.price).slice(0, 10), true)}
 
@@ -736,9 +762,13 @@
                         ` : `
                             <img src="${game.imageUrl}" alt="${game.title}" class="w-full h-96 object-cover">
                         `}
-                        <div class="absolute bottom-0 left-0 p-8 bg-gradient-to-t from-black to-transparent w-full">
-                            <h1 class="text-5xl font-bold text-white mb-2">${game.title}</h1>
-                            <p class="text-xl text-gray-300">${game.developer} | ${game.genre}</p>
+                        <div class="absolute inset-0 p-8 bg-gradient-to-t from-black to-transparent w-full flex flex-col justify-between">
+                            <div> <!-- Container for top-aligned title -->
+                                <h1 class="text-5xl font-bold text-white">${game.title}</h1>
+                            </div>
+                            <div> <!-- Container for bottom-aligned subtitle -->
+                                <p class="text-xl text-gray-300">${game.developer} | ${game.genre}</p>
+                            </div>
                         </div>
                     </div>
 
@@ -1013,24 +1043,21 @@
             // Render page specific content and show it
             switch (pageName) {
                 case 'store':
-                    renderStorePage();
-                    showPage(storePage);
-                    // Sidebar remains as per new requirement
+                case 'community':
+                case 'unreal-engine':
+                    renderPageContent(pageName); // Render the specific page content
+                    showPage(document.getElementById(`${pageName}-page`));
+                    if (isSidebarMiniLibraryActive) { // If sidebar was active, make it wider
+                        sidebar.classList.remove('w-64');
+                        sidebar.classList.add('w-80');
+                    }
                     break;
                 case 'library':
                     renderLibraryPage();
                     showPage(libraryPage);
                     activateSidebarMiniLibrary(); // Always activate mini-library for library page
-                    break;
-                case 'community':
-                    renderCommunityPage();
-                    showPage(communityPage);
-                    // Sidebar remains as per new requirement
-                    break;
-                case 'unreal-engine':
-                    renderUnrealEnginePage();
-                    showPage(unrealEnginePage);
-                    // Sidebar remains as per new requirement
+                    sidebar.classList.remove('w-80'); // Ensure it's back to standard width for library
+                    sidebar.classList.add('w-64');
                     break;
                 case 'settings':
                     renderSettingsPage();
@@ -1040,25 +1067,66 @@
                 default:
                     renderStorePage(); // Default to store page
                     showPage(storePage);
-                    // Sidebar remains as per new requirement
+                    if (isSidebarMiniLibraryActive) { // If sidebar was active, make it wider
+                        sidebar.classList.remove('w-64');
+                        sidebar.classList.add('w-80');
+                    }
                     break;
             }
         }
 
+        // Helper function to render page content based on name
+        function renderPageContent(pageName) {
+            switch (pageName) {
+                case 'store':
+                    renderStorePage();
+                    break;
+                case 'community':
+                    renderCommunityPage();
+                    break;
+                case 'unreal-engine':
+                    renderUnrealEnginePage();
+                    break;
+                // library and settings are handled directly in loadPage for specific sidebar logic
+            }
+        }
+
+
         /** Activates the sidebar mini-library view. */
         function activateSidebarMiniLibrary() {
-            if (isSidebarMiniLibraryActive) return; // Prevent re-activation if already active
-
             sidebar.classList.remove('hidden'); // Show the sidebar container
 
-            const miniLibraryContent = myLibraryGames.map(game => `
-                <div class="text-gray-300 hover:text-white p-1 rounded-md transition-colors duration-200 text-sm">
-                    ${game.title}
-                </div>
-            `).join('');
-            sidebarMiniLibrary.querySelector('div').innerHTML = miniLibraryContent;
+            const installedGames = myLibraryGames.filter(game => game.installed);
+            const notInstalledGames = myLibraryGames.filter(game => !game.installed);
+
+            let miniLibraryContent = '';
+
+            if (installedGames.length > 0) {
+                miniLibraryContent += `
+                    <h3 class="text-gray-400 text-sm font-semibold mb-2 mt-4 border-t border-gray-700 pt-4">Installed</h3>
+                    ${installedGames.map(game => `
+                        <div class="text-gray-300 hover:text-white p-1 rounded-md transition-colors duration-200 text-sm">
+                            ${game.title}
+                        </div>
+                    `).join('')}
+                `;
+            }
+
+            if (notInstalledGames.length > 0) {
+                miniLibraryContent += `
+                    <h3 class="text-gray-400 text-sm font-semibold mb-2 mt-4 border-t border-gray-700 pt-4">Not Installed</h3>
+                    ${notInstalledGames.map(game => `
+                        <div class="text-gray-500 hover:text-gray-400 p-1 rounded-md transition-colors duration-200 text-sm">
+                            ${game.title}
+                        </div>
+                    `).join('')}
+                `;
+            }
+
+            sidebarMiniLibrary.querySelector('div.space-y-1').innerHTML = miniLibraryContent; // Target the inner div for games
             isSidebarMiniLibraryActive = true;
         }
+
 
         /** Deactivates the sidebar mini-library view. */
         function deactivateSidebarMiniLibrary() {
@@ -1069,7 +1137,7 @@
             if (!isSidebarMiniLibraryActive) return; // Prevent de-activation if already inactive
 
             sidebar.classList.add('hidden'); // Hide the sidebar container
-            sidebarMiniLibrary.querySelector('div').innerHTML = ''; // Clear content
+            sidebarMiniLibrary.querySelector('div.space-y-1').innerHTML = ''; // Clear content
             isSidebarMiniLibraryActive = false;
         }
 
